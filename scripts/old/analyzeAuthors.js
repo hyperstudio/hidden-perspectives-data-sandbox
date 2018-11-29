@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Promise } = require('es6-promise');
 const unirest = require('unirest');
 const crypto = require('crypto');
-const API_KEY = process.env.API_TOKEN;
+const API_KEY = process.env.API_KEY;
 
 const authorsJSON = require('./json/documents-authors.json');
 

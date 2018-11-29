@@ -1,5 +1,5 @@
 const unirest = require('unirest');
-const API_KEY = process.env.API_TOKEN;
+const API_KEY = process.env.API_KEY;
 
 function analyzeText(textToBeAnalyzed, dandelionOptions) {
     const { apiKey, urlKey, includeValues } = dandelionOptions;

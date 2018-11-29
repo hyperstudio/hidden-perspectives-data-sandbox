@@ -97,7 +97,7 @@ Promise.resolve(excelData)
         const writeEnties = extractedEntities => {
             return new Promise(resolve => {
                 fs.readFile(
-                    './data/json/document/extractedEntities.json',
+                    './data/json/entities/extractedEntities.json',
                     'utf8',
                     (error, entityJSON) => {
                         if (error) {
