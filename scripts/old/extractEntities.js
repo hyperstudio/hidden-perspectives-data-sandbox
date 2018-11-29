@@ -4,7 +4,7 @@ const Excel = require('exceljs');
 const unirest = require('unirest');
 const chrono = require('chrono-node');
 const crypto = require('crypto');
-const API_KEY = process.env.API_TOKEN;
+const API_KEY = process.env.API_KEY;
 
 // Checkout Dandelion (https://dandelion.eu/) for a free key
 const apiKey = API_KEY;
