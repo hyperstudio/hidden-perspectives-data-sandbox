@@ -1,5 +1,6 @@
 require('dotenv').config();
 const fs = require('fs');
+const path = require('path');
 
 // Util scripts
 const parseDates = require('./scripts/utils/parseDates.js');
@@ -17,7 +18,8 @@ const clusterExtractedEntities = require('./scripts/clusterExtractedEntities.js'
 // Parse document and event sheets to json
 const excelData = convertExcelToJSON(['documents', 'events']);
 
-const allowDandelionExtraction = true;
+const rootPath = path.resolve(__dirname);
+const dataPath = path.resolve(rootPath, '../hidden-perspective-data/');
 
 Promise.resolve(excelData)
     // Merge documents and events data
@@ -39,21 +41,27 @@ Promise.resolve(excelData)
     })
     // Extract kind tags
     .then(data => {
+        console.log();
+        const kindsJSONPath = path.resolve(
+            dataPath,
+            './data/json/kind/tagsKind.json'
+        );
         const kindsJSON = createDocumentTagsJSON('kind', data);
-        writeFile('./data/json/kind/tagsKind.json', kindsJSON);
+        writeFile(kindsJSONPath, kindsJSON);
 
         return data;
     })
     // Extract classification tags
     .then(data => {
+        const classificationJSONPath = path.resolve(
+            dataPath,
+            './data/json/kind/classificationTags.json'
+        );
         const classificationJSON = createDocumentTagsJSON(
             'classification',
             data
         );
-        writeFile(
-            './data/json/kind/classificationTags.json',
-            classificationJSON
-        );
+        writeFile(classificationJSONPath, classificationJSON);
 
         return data;
     })
@@ -62,118 +70,125 @@ Promise.resolve(excelData)
         const clusteredDocumentStakeholders = getClusteredDocumentStakeholders(
             data
         );
+        const clusteredDocumentStakeholdersPath = path.resolve(
+            dataPath,
+            './data/json/stakeholder/clusteredDocumentStakeholders.json'
+        );
         writeFile(
-            './data/json/stakeholder/clusteredDocumentStakeholders.json',
+            clusteredDocumentStakeholdersPath,
             clusteredDocumentStakeholders
         );
 
         return data;
     })
     // Get merged strings for stakeholder extraction with dandelion api
-    // TODO: Clean up functions
     .then(data => {
         const stakeholderStrings = getStakeholderMergedStrings(data);
         const { documentStrings, eventStrings } = stakeholderStrings;
 
-        const stringsAll = [].concat.apply([], [documentStrings, eventStrings]);
-        const stringsAllLength = stringsAll.length;
+        const mergedData = [].concat.apply([], [documentStrings, eventStrings]);
+        return mergedData;
+    })
+    // TODO: Clean up functions
+    .then(mergedData => {
+        const mergedDataLength = mergedData.length;
 
         let dandelionUnitsLeft = 1;
         let entitiesFileLength = 0;
+        const dataToBeAnalyzed = mergedData[entitiesFileLength];
+
+        const shouldEntitiesBeExtracted =
+            entitiesFileLength === mergedDataLength || dandelionUnitsLeft === 0;
+
+        const extractEntiesPath = path.resolve(
+            dataPath,
+            './data/json/entities/extractedEntities.json'
+        );
+
+        // const writeEnties = extractedEntities => {
+        //     return new Promise(resolve => {
+        //         fs.readFile(
+        //             extractEntiesPath,
+        //             'utf8',
+        //             (error, entityJSON) => {
+        //                 if (error) {
+        //                     console.log(`Read file error: ${error}`);
+        //                     writeEnties();
+        //                 } else {
+        //                     const dataToBeAnalyzed =
+        //                         mergedData[entitiesFileLength];
+        //                     const entitiesObj = JSON.parse(entityJSON);
+        //                     entitiesFileLength = entitiesObj.length;
+
+        //                     console.log(
+        //                         `dandelionUnitsLeft: ${dandelionUnitsLeft}, entitiesFileLength: ${entitiesFileLength}`
+        //                     );
+
+        //                     if (
+        //                         !shouldEntitiesBeExtracted &&
+        //                         extractedEntities !== 'initial'
+        //                     ) {
+        //                         // Safety measure: Dandelion API allows max. 50 requests per second
+        //                         setTimeout(() => {
+        //                             const extractedData = {
+        //                                 entities: extractedEntities,
+        //                                 fileName: dataToBeAnalyzed.fileName,
+        //                                 originalString:
+        //                                     dataToBeAnalyzed.mergedString
+        //                             };
+
+        //                             appendToFile(
+        //                                 extractEntiesPath,
+        //                                 extractedData,
+        //                                 () => {
+        //                                     console.log(
+        //                                         'Extract next entities!'
+        //                                     );
+        //                                     extractEnties();
+        //                                 }
+        //                             );
+        //                         }, 25);
+        //                     } else if (
+        //                         extractedEntities === 'initial' &&
+        //                         !shouldEntitiesBeExtracted
+        //                     ) {
+        //                         console.log('Extract initial entities!');
+        //                         extractEnties();
+        //                     } else if (dandelionUnitsLeft === 0) {
+        //                         console.log('No Dandelion Units left!');
+        //                         resolve(entitiesObj);
+        //                     } else if (
+        //                         entitiesFileLength === mergedDataLength
+        //                     ) {
+        //                         console.log('Extracted all entities!');
+        //                         resolve(entitiesObj);
+        //                     }
+        //                 }
+        //             }
+        //         );
+        //     });
+        // };
+
+        // Promise.resolve(extractedEntitiesPromise).then(result => {
+        //     console.log(result);
+        //     // const { entities, unitsLeft } = result;
+        //     // dandelionUnitsLeft =
+        //     //     unitsLeft !== undefined
+        //     //         ? unitsLeft
+        //     //         : (dandelionUnitsLeft -= 1);
+        // });
 
         // Get entities from Dandelion
-        const getEntities = textToBeAnalyzed => {
-            return new Promise(resolve => {
-                // Extract entities from string with Dandelion API
-                const extractedEntitiesPromise = extractEntitiesWithDandelion(
-                    textToBeAnalyzed
-                );
-                Promise.resolve(extractedEntitiesPromise).then(result => {
-                    resolve(result);
-                });
-            });
-        };
+        // const extractedEntitiesPromise = extractEntitiesWithDandelion(
+        //     dataToBeAnalyzed
+        // );
 
-        const writeEnties = extractedEntities => {
-            return new Promise(resolve => {
-                fs.readFile(
-                    './data/json/document/extractedEntities.json',
-                    'utf8',
-                    (error, entityJSON) => {
-                        if (error) {
-                            console.log(`Read file error: ${error}`);
-                            writeEnties();
-                        } else {
-                            const currentString =
-                                stringsAll[entitiesFileLength];
-                            const entitiesObj = JSON.parse(entityJSON);
-                            entitiesFileLength = entitiesObj.length;
-
-                            console.log(
-                                `dandelionUnitsLeft: ${dandelionUnitsLeft}, entitiesFileLength: ${entitiesFileLength}`
-                            );
-
-                            if (
-                                entitiesFileLength < stringsAllLength &&
-                                dandelionUnitsLeft > 0 &&
-                                allowDandelionExtraction &&
-                                extractedEntities !== 'initial'
-                            ) {
-                                // Safety measure: Dandelion API allows max. 50 requests per second
-                                setTimeout(() => {
-                                    const extractedData = {
-                                        entities: extractedEntities,
-                                        fileName: currentString.fileName,
-                                        originalString:
-                                            currentString.mergedString
-                                    };
-                                    appendToFile(
-                                        './data/json/document/extractedEntities.json',
-                                        extractedData,
-                                        () => {
-                                            console.log(
-                                                'Extract next entities!'
-                                            );
-                                            extractEnties();
-                                        }
-                                    );
-                                }, 25);
-                            } else if (
-                                extractedEntities === 'initial' &&
-                                entitiesFileLength < stringsAllLength &&
-                                dandelionUnitsLeft > 0
-                            ) {
-                                console.log('Extract initial entities!');
-                                extractEnties();
-                            } else if (dandelionUnitsLeft === 0) {
-                                console.log('No Dandelion Units left!');
-                                resolve(entitiesObj);
-                            } else if (
-                                entitiesFileLength === stringsAllLength
-                            ) {
-                                console.log('Extracted all entities!');
-                                resolve(entitiesObj);
-                            }
-                        }
-                    }
-                );
-            });
-        };
-
-        const extractEnties = () => {
-            const currentString = stringsAll[entitiesFileLength];
-            Promise.resolve(getEntities(currentString)).then(result => {
-                const { entities, unitsLeft } = result;
-                dandelionUnitsLeft =
-                    unitsLeft !== undefined
-                        ? unitsLeft
-                        : (dandelionUnitsLeft -= 1);
-
-                writeEnties(entities).then(entitiesFileData => {
-                    clusterExtractedEntities(entitiesFileData);
-                });
-            });
-        };
-
-        writeEnties('initial');
+        // if (shouldEntitiesBeExtracted) {
+        //     console.log('keep extracting entities');
+        // } else {
+        //     return extractedEntitiesPromise;
+        // }
+    })
+    .then(() => {
+        console.log('done');
     });

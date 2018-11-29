@@ -1,9 +1,9 @@
 const unirest = require('unirest');
-const API_KEY = process.env.API_TOKEN;
+const API_KEY = process.env.API_KEY;
 
-function analyzeText(textToBeAnalyzed, dandelionOptions) {
+function analyzeText(dataToBeAnalyzed, dandelionOptions) {
     const { apiKey, urlKey, includeValues } = dandelionOptions;
-    const { mergedString } = textToBeAnalyzed;
+    const { mergedString } = dataToBeAnalyzed;
 
     try {
         const url = `https://api.dandelion.eu/datatxt/${urlKey}/v1/?text=${mergedString}&include=${includeValues}&token=${apiKey}&lang=en`;
@@ -36,7 +36,7 @@ function analyzeText(textToBeAnalyzed, dandelionOptions) {
     }
 }
 
-function extractEntitiesWithDandelion(textToBeAnalyzed) {
+function extractEntitiesWithDandelion(dataToBeAnalyzed) {
     // Overview of API Endpoints: https://dandelion.eu/docs/
     const dandelionOptions = {
         // Checkout Dandelion (https://dandelion.eu/) for a free key
@@ -45,7 +45,7 @@ function extractEntitiesWithDandelion(textToBeAnalyzed) {
         includeValues: 'types,abstract'
     };
 
-    const analyzeTextPromise = analyzeText(textToBeAnalyzed, dandelionOptions);
+    const analyzeTextPromise = analyzeText(dataToBeAnalyzed, dandelionOptions);
 
     return analyzeTextPromise;
 }
