@@ -80,4 +80,4 @@ convertExcelToJSON(['documents', 'events'])
 	.catch(abortWithError)
 	// // .then(extractAndSaveTranscripts)
 	// // .then(extractAndSaveOriginals)
-	// .then(logSuccessMessage);
+	.then(logSuccessMessage);
