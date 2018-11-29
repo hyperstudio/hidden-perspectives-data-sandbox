@@ -90,8 +90,11 @@ function convertExcelToJSON(workbookTypes) {
     const excelData = workbookTypes.map(workbookType => {
         const directoryPath = path.resolve(
             __dirname,
-            `../data/sheets/${workbookType}/`
+            `../../hidden-perspective-data/data/sheets/${workbookType}/`
         );
+
+        console.log('directoryPath');
+        console.log(directoryPath);
 
         const workbooksAll = fs.readdirSync(directoryPath).map(file => {
             const filePath = path.join(directoryPath, file);
