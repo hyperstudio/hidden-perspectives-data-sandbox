@@ -80,8 +80,6 @@ function parseEntityDandelionResponse(response) {
 }
 
 const saveEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolve, reject) => {
-	console.log(dataItem);
-
 	const rawEntitiesPath = getPathByConstantName('RAW_ENTITIES');
 	fs.readFile(rawEntitiesPath, 'utf8', (error, fileData) => {
 		if (error) return reject(error);
@@ -143,7 +141,7 @@ function collectEntitiesFromDataItem(dataItem, allDataItems) {
 		}));
 }
 
-function collectEntitiesForNextDataItem(dataItem, allDataItems) {
+function collectEntitiesForNextDataItem({ dataItem, allDataItems }) {
 	const indexOfDataItem = allDataItems.findIndex(hasSameId(dataItem.fileName));
 	const indexOfNextDataItem = indexOfDataItem + 1;
 	const nextDataItem = allDataItems[indexOfNextDataItem];
