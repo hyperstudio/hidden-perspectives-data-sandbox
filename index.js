@@ -70,13 +70,16 @@ Promise.resolve(excelData)
         return data;
     })
     // Get merged strings for stakeholder extraction with dandelion api
-    // TODO: Clean up functions
     .then(data => {
         const stakeholderStrings = getStakeholderMergedStrings(data);
         const { documentStrings, eventStrings } = stakeholderStrings;
 
-        const stringsAll = [].concat.apply([], [documentStrings, eventStrings]);
-        const stringsAllLength = stringsAll.length;
+        const mergedData = [].concat.apply([], [documentStrings, eventStrings]);
+        return mergedData;
+    })
+    // TODO: Clean up functions
+    .then(mergedData => {
+        const mergedDataLength = mergedData.length;
 
         let dandelionUnitsLeft = 1;
         let entitiesFileLength = 0;
@@ -105,7 +108,7 @@ Promise.resolve(excelData)
                             writeEnties();
                         } else {
                             const currentString =
-                                stringsAll[entitiesFileLength];
+                                mergedData[entitiesFileLength];
                             const entitiesObj = JSON.parse(entityJSON);
                             entitiesFileLength = entitiesObj.length;
 
@@ -114,7 +117,7 @@ Promise.resolve(excelData)
                             );
 
                             if (
-                                entitiesFileLength < stringsAllLength &&
+                                entitiesFileLength < mergedDataLength &&
                                 dandelionUnitsLeft > 0 &&
                                 allowDandelionExtraction &&
                                 extractedEntities !== 'initial'
@@ -127,6 +130,7 @@ Promise.resolve(excelData)
                                         originalString:
                                             currentString.mergedString
                                     };
+
                                     appendToFile(
                                         './data/json/document/extractedEntities.json',
                                         extractedData,
@@ -140,7 +144,7 @@ Promise.resolve(excelData)
                                 }, 25);
                             } else if (
                                 extractedEntities === 'initial' &&
-                                entitiesFileLength < stringsAllLength &&
+                                entitiesFileLength < mergedDataLength &&
                                 dandelionUnitsLeft > 0
                             ) {
                                 console.log('Extract initial entities!');
@@ -149,7 +153,7 @@ Promise.resolve(excelData)
                                 console.log('No Dandelion Units left!');
                                 resolve(entitiesObj);
                             } else if (
-                                entitiesFileLength === stringsAllLength
+                                entitiesFileLength === mergedDataLength
                             ) {
                                 console.log('Extracted all entities!');
                                 resolve(entitiesObj);
@@ -161,7 +165,7 @@ Promise.resolve(excelData)
         };
 
         const extractEnties = () => {
-            const currentString = stringsAll[entitiesFileLength];
+            const currentString = mergedData[entitiesFileLength];
             Promise.resolve(getEntities(currentString)).then(result => {
                 const { entities, unitsLeft } = result;
                 dandelionUnitsLeft =
