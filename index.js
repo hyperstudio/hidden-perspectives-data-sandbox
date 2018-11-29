@@ -5,10 +5,10 @@ const fs = require('fs');
 const parseDates = require('./scripts/utils/parseDates.js');
 const writeFile = require('./scripts/utils/writeFile.js');
 const appendToFile = require('./scripts/utils/appendToFile.js');
-const extractEntitiesWithDandelion = require('./scripts/utils/extractEntitiesWithDandelion.js');
+const extractEntitiesWithDandelion = require('./scripts/extractEntitiesWithDandelion.js');
 
 // Data handling scripts
-const convertExcelToJSON = require('./scripts/convertExcelToJSON.js');
+const convertExcelToJSON = require('./scripts/utils/convertExcelToJSON.js');
 const createDocumentTagsJSON = require('./scripts/createDocumentTagsJSON.js');
 const getClusteredDocumentStakeholders = require('./scripts/getClusteredDocumentStakeholders.js');
 const getStakeholderMergedStrings = require('./scripts/getStakeholderMergedStrings.js');
