@@ -4,3 +4,5 @@ data/
 json/
 
 *.todo
+
+.DS_Store
