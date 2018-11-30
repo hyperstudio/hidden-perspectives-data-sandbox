@@ -11,7 +11,7 @@ const collectEntitiesFromDataItem = require('./collectEntitiesFromDataItem');
 const convertExcelToJSON = require('../utils/convertExcelToJSON');
 const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
-const extractAndSaveTranscripts = require('./extractAndSaveTranscripts');
+const extractAndAddTranscripts = require('./extractAndAddTranscripts');
 
 const startDate = new Date();
 
@@ -64,6 +64,24 @@ const extractAndSaveStakeholders = (data) => {
 	return data;
 };
 
+const saveDocumentsAndEvents = (data) => {
+	const { documents, events } = data;
+	console.log('SAVING DOCUMENTS AND EVENTS DATA:');
+	console.log('————————————————————————————————————————————————————');
+	console.log(`Documents: ${documents.length}`);
+	console.log(`Events: ${events.length}`);
+
+	// Save documents as JSON
+	const documentsDataPath = getPathByConstantName('DOCUMENTS_DATA_PATH');
+	writeFile(documentsDataPath, documents);
+	// Save events as JSON
+	const eventsDataPath = getPathByConstantName('EVENTS_DATA_PATH');
+	writeFile(eventsDataPath, events);
+	console.log('————————————————————————————————————————————————————\n\n');
+
+	return data;
+};
+
 const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, reject) => {
 	const data = [...documents, ...events];
 	return collectEntitiesFromDataItem(data[0], data)
@@ -86,8 +104,9 @@ convertExcelToJSON(['documents', 'events'])
 	.then(extractAndSaveKinds)
 	.then(extractAndSaveClassifications)
 	.then(extractAndSaveStakeholders)
-	.then(extractAndSaveEntities) // continue here
+	// .then(extractAndSaveEntities) // continue here
 	.catch(abortWithError)
-	.then(extractAndSaveTranscripts)
+	.then(extractAndAddTranscripts)
+	.then(saveDocumentsAndEvents)
 	// .then(extractAndSaveOriginals)
 	.then(logSuccessMessage);

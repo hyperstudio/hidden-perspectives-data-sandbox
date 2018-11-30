@@ -5,6 +5,8 @@ const FILE_PATHS = {
 	RAW_ENTITIES: './data/json/entities/extractedEntities.json',
 	RAW_WORKBOOKS_DIRECTORY_PATH: './data/sheets/',
 	RAW_TEXT_FILES_DIRECTORY_PATH: './data/text_files/',
+	DOCUMENTS_DATA_PATH: './data/json/documents/documentsWithEntitiesAndTextFiles.json',
+	EVENTS_DATA_PATH: './data/json/events/eventsWithEntitiesAndTextFiles.json',
 };
 
 const ERROR_TYPES = {

@@ -44,7 +44,7 @@ function getUirFromFileName(filePath) {
 
 	return fileBaseName;
 }
-function extractAndSaveTranscripts(data) {
+function extractAndAddTranscripts(data) {
 	const { documents } = data;
 
 	const textFilesDirectoryPath = getPathByConstantName('RAW_TEXT_FILES_DIRECTORY_PATH');
@@ -71,4 +71,4 @@ function extractAndSaveTranscripts(data) {
 	return data;
 }
 
-module.exports = extractAndSaveTranscripts;
+module.exports = extractAndAddTranscripts;
