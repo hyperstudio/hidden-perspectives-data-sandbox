@@ -11,7 +11,13 @@ const collectEntitiesFromDataItem = require('./collectEntitiesFromDataItem');
 const convertExcelToJSON = require('../utils/convertExcelToJSON');
 const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
+<<<<<<< HEAD
 // const extractAndSaveOriginals = require('./extractAndSaveOriginals');
+=======
+const extractAndAddTranscripts = require('./extractAndAddTranscripts');
+
+const startDate = new Date();
+>>>>>>> 9fb608f17c6656d89decf5333325f76c9ee2366a
 
 const logDataStats = (data) => {
 	const { documents, events } = data;
@@ -62,6 +68,24 @@ const extractAndSaveStakeholders = (data) => {
 	return data;
 };
 
+const saveDocumentsAndEvents = (data) => {
+	const { documents, events } = data;
+	console.log('SAVING DOCUMENTS AND EVENTS DATA:');
+	console.log('————————————————————————————————————————————————————');
+	console.log(`Documents: ${documents.length}`);
+	console.log(`Events: ${events.length}`);
+
+	// Save documents as JSON
+	const documentsDataPath = getPathByConstantName('DOCUMENTS_DATA_PATH');
+	writeFile(documentsDataPath, documents);
+	// Save events as JSON
+	const eventsDataPath = getPathByConstantName('EVENTS_DATA_PATH');
+	writeFile(eventsDataPath, events);
+	console.log('————————————————————————————————————————————————————\n\n');
+
+	return data;
+};
+
 const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, reject) => {
 	const data = [...documents, ...events];
 	return collectEntitiesFromDataItem(data[0], data)
@@ -69,7 +93,14 @@ const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, 
 		.catch(reject);
 });
 
-const logSuccessMessage = () => console.log('done');
+const logSuccessMessage = () => {
+	const endDate = new Date() - startDate;
+
+	console.log('FINISHED EXECUTING SCRIPT:');
+	console.log('————————————————————————————————————————————————————');
+	console.info('Execution time: %dms', endDate);
+	console.log('————————————————————————————————————————————————————\n\n');
+};
 
 convertExcelToJSON(['documents', 'events'])
 	.then(logDataStats)
@@ -77,8 +108,17 @@ convertExcelToJSON(['documents', 'events'])
 	.then(extractAndSaveKinds)
 	.then(extractAndSaveClassifications)
 	.then(extractAndSaveStakeholders)
+<<<<<<< HEAD
 	.then(extractAndSaveEntities)
 	// .then(extractAndSaveOriginals) // Save files and check if already existing
 	// .then(extractAndSaveTranscripts)
 	.then(logSuccessMessage)
 	.catch(abortWithError);
+=======
+	// .then(extractAndSaveEntities) // continue here
+	.catch(abortWithError)
+	.then(extractAndAddTranscripts)
+	.then(saveDocumentsAndEvents)
+	// .then(extractAndSaveOriginals)
+	.then(logSuccessMessage);
+>>>>>>> 9fb608f17c6656d89decf5333325f76c9ee2366a

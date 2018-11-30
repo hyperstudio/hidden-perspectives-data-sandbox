@@ -73,9 +73,20 @@ function parseEntityDandelionResponse(response) {
 	const { annotations } = body;
 	// const unitsLeft = headers['x-dl-units-left'];
 
+	if (body.error) {
+		const { message, code } = body;
+		return {
+			entities: [],
+			error: {
+				message,
+				stack: error.stack,
+				code,
+			},
+		};
+	}
+
 	return {
 		entities: annotations,
-		error,
 	};
 }
 
@@ -106,8 +117,7 @@ const saveEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolv
 	});
 });
 
-function parseDandelionError(response) {
-	const { body: error } = response;
+function parseDandelionError(error) {
 	const { message, code } = error;
 
 	if (code === 'error.invalidParameter') {
@@ -116,6 +126,7 @@ function parseDandelionError(response) {
 
 		if (hasInvalidChar) return ERROR_TYPES.INVALID_CHARACTERS_IN_DANDELION_REQUEST;
 	}
+
 	return error;
 }
 
@@ -130,18 +141,22 @@ function onEntitiesParseError(err) {
 function collectEntitiesFromDataItem(dataItem, allDataItems) {
 	return new Promise((resolve, reject) => getEntitiesFromFile(dataItem.fileName)
 		.then((entities) => {
+			console.log('EXTRACTING AND SAVING ENTITIES:');
+			console.log('————————————————————————————————————————————————————');
+
 			if (!entities) {
+				console.log('NO ENTITY FOUND IN FILE: Extracting from Dandelion API.');
 				const stringToBeAnalyzed = getStringToBeAnalyzed(dataItem);
-				console.log(stringToBeAnalyzed);
 				return getEntitiesFromDandelion(stringToBeAnalyzed)
-					.then(() => resolve({ entities, dataItem, allDataItems }))
+					.then((resolvedEntities) => resolve({ entities: resolvedEntities, dataItem, allDataItems }))
 					.catch((err) => reject(parseDandelionError(err), dataItem, allDataItems));
 			}
+			console.log('FOUND ENTITY IN FILE: Skipping Dandelion query.');
 			return resolve({ entities, dataItem, allDataItems });
 		}));
 }
 
-function collectEntitiesForNextDataItem(dataItem, allDataItems) {
+function collectEntitiesForNextDataItem({ dataItem, allDataItems }) {
 	const indexOfDataItem = allDataItems.findIndex(hasSameId(dataItem.fileName));
 	const indexOfNextDataItem = indexOfDataItem + 1;
 	const nextDataItem = allDataItems[indexOfNextDataItem];
@@ -160,7 +175,10 @@ const getOnEntitiesCollectionErrorHandler = ({
 	return reject(err);
 };
 
-const parseEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolve) => {
+const logEntities = ({ entities, dataItem, allDataItems }) => new Promise((resolve) => {
+	console.log(`EXTRACTED ENTITIES: ${entities.length} from ${dataItem.fileName}`);
+	console.log('————————————————————————————————————————————————————\n\n');
+
 	resolve({ entities, dataItem, allDataItems });
 });
 
@@ -168,7 +186,7 @@ function getAndSaveEntitiesForDataItem(dataItem, allDataItems) {
 	return new Promise((resolve, reject) => collectEntitiesFromDataItem(dataItem, allDataItems)
 		.then(saveEntity)
 		.catch(onEntitiesSaveError)
-		.then(parseEntity)
+		.then(logEntities)
 		.catch(onEntitiesParseError)
 		.then(collectEntitiesForNextDataItem)
 		.catch(getOnEntitiesCollectionErrorHandler({
