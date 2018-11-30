@@ -104,7 +104,7 @@ convertExcelToJSON(['documents', 'events'])
 	.then(extractAndSaveKinds)
 	.then(extractAndSaveClassifications)
 	.then(extractAndSaveStakeholders)
-	.then(extractAndSaveEntities)
+	// .then(extractAndSaveEntities)
 	// .then(extractAndSaveOriginals) // Save files and check if already existing
 	.then(extractAndAddTranscripts)
 	.then(saveDocumentsAndEvents)
