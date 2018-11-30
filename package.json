@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"convertDocumentsAndEvents": "node ./scripts/convertDocumentsAndEvents/index.js",
+		"prepareDataForGraphcool": "node ./scripts/prepareDataForGraphcool/index.js",
 		"lint": "eslint scripts"
 	},
 	"author": "",
