@@ -2,7 +2,13 @@ const fs = require('fs');
 
 function writeFile(filepath, data) {
 	fs.writeFile(filepath, JSON.stringify(data), 'utf8', () => {
-		console.log(`Wrote file: ${filepath}`);
+		const numberOfEntries = Object.keys(data).length;
+
+		console.log('WROTE FILE:');
+		console.log('————————————————————————————————————————————————————');
+		console.log(`Number of entries: ${numberOfEntries}`);
+		console.log(`File path: ${filepath}`);
+		console.log('————————————————————————————————————————————————————\n\n');
 	});
 }
 

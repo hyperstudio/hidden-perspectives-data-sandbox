@@ -13,6 +13,8 @@ const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
 const extractAndSaveTranscripts = require('./extractAndSaveTranscripts');
 
+const startDate = new Date();
+
 const logDataStats = (data) => {
 	const { documents, events } = data;
 	console.log('PROCESSING DATA:');
@@ -69,7 +71,14 @@ const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, 
 		.catch(reject);
 });
 
-const logSuccessMessage = () => console.log('done');
+const logSuccessMessage = () => {
+	const endDate = new Date() - startDate;
+
+	console.log('FINISHED EXECUTING SCRIPT:');
+	console.log('————————————————————————————————————————————————————');
+	console.info('Execution time: %dms', endDate);
+	console.log('————————————————————————————————————————————————————\n\n');
+};
 
 convertExcelToJSON(['documents', 'events'])
 	.then(logDataStats)
