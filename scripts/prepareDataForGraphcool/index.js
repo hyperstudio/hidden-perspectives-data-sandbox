@@ -4,10 +4,12 @@ const fs = require('fs');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
 
+// const isArray = Array.isArray(dataFromFile);
+// const dataLength = isArray ? dataFromFile.length : Object.keys(dataFromFile).length;
+
 function getRelevantDataFromFiles(dataPaths) {
 	return new Promise((resolve) => {
 		const dataPathsKeys = Object.keys(dataPaths);
-
 		const data = {};
 
 		console.log('READ DATA FROM FILES:');
@@ -19,9 +21,7 @@ function getRelevantDataFromFiles(dataPaths) {
 				const rawDataFromFile = fs.readFileSync(dataPath, 'utf8');
 				const dataFromFile = JSON.parse(rawDataFromFile);
 
-				const isArray = Array.isArray(dataFromFile);
-				const dataLength = isArray ? dataFromFile.length : Object.keys(dataFromFile).length;
-				console.log(`${dataPathKey}: ${dataLength}`);
+				console.log(`✓ ${dataPathKey}`);
 
 				data[dataPathKey] = dataFromFile;
 			} catch (error) {
@@ -39,12 +39,37 @@ function getRelevantDataFromFiles(dataPaths) {
 	});
 }
 
-function clusterEntities() {
+function clusterEntities(data) {
+	const { rawEntities } = data;
 
+	const clusteredEntities = {};
+	const addEntity = (entity, fileName) => {
+		const { title } = entity;
+		const hasEntity = Object.prototype.hasOwnProperty.call(clusteredEntities, title);
+		if (!hasEntity) {
+			clusteredEntities[title] = [fileName];
+		} else {
+			clusteredEntities[title].push(fileName);
+		}
+	};
+
+	rawEntities.forEach((datum) => {
+		const { entities, fileName } = datum;
+
+		if (entities && entities instanceof Array) {
+			entities.forEach((entity) => {
+				addEntity(entity, fileName);
+			});
+		} else {
+			addEntity(entities, fileName);
+		}
+	});
+
+	return { ...data, rawEntities: clusteredEntities };
 }
 
-function splitEntitiesInCategories() {
-
+function splitEntitiesInCategories(data) {
+	console.log(Object.keys(data.rawEntities).length);
 }
 
 function createGraphcoolBriefingBook() {
@@ -92,9 +117,8 @@ const relevantDataPaths = {
 };
 
 getRelevantDataFromFiles(relevantDataPaths)
-	// .then(console.log);
-	// .then(clusterEntities)
-	// .then(splitEntitiesInCategories)
+	.then(clusterEntities)
+	.then(splitEntitiesInCategories)
 	// // Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
 	// .then(createGraphcoolClassification)
@@ -106,5 +130,5 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createGraphcoolFile) // System?
 	// // Create Graphcool RELATIONS
 	// .then(createGraphcoolRelations)
-	// .then(() => console.log('done'))
-	// .catch(abortWithError);
+	.then(() => console.log('done'))
+	.catch(abortWithError);
