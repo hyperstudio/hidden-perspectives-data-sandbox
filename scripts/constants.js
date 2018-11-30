@@ -4,6 +4,7 @@ const FILE_PATHS = {
 	RAW_CLUSTERED_STAKEHOLDERS: './data/json/stakeholder/clusteredDocumentStakeholders.json',
 	RAW_ENTITIES: './data/json/entities/extractedEntities.json',
 	RAW_WORKBOOKS_DIRECTORY_PATH: './data/sheets/',
+	ORIGINAL_DOCUMENT_DIRECTORY_PATH: './data/original_documents/',
 };
 
 const ERROR_TYPES = {

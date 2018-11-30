@@ -80,8 +80,6 @@ function parseEntityDandelionResponse(response) {
 }
 
 const saveEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolve, reject) => {
-	console.log(dataItem);
-
 	const rawEntitiesPath = getPathByConstantName('RAW_ENTITIES');
 	fs.readFile(rawEntitiesPath, 'utf8', (error, fileData) => {
 		if (error) return reject(error);

@@ -15,7 +15,9 @@
 		"csvtojson": "^2.0.8",
 		"es6-promise": "^4.2.5",
 		"exceljs": "^1.6.2",
+		"form-data": "^2.3.3",
 		"fs": "0.0.1-security",
+		"node-fetch": "^2.3.0",
 		"unirest": "^0.5.1",
 		"xlsx": "^0.14.1"
 	},
