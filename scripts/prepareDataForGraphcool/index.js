@@ -4,8 +4,35 @@ const fs = require('fs');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
 
-// const isArray = Array.isArray(dataFromFile);
-// const dataLength = isArray ? dataFromFile.length : Object.keys(dataFromFile).length;
+function getNumberOfDataItems(data) {
+	const isArray = Array.isArray(data);
+	const dataLength = isArray ? data.length : Object.keys(data).length;
+
+	return dataLength;
+}
+
+function getRelevantEntityType(entityTypes) {
+	let entityType;
+	// console.log(entityTypes);
+
+	entityTypes.forEach((type) => {
+		const regexPattern = '[^/]+$';
+		const regex = new RegExp(regexPattern);
+		const matchedReg = type.match(regex);
+		const extractedType = matchedReg[0].toLowerCase();
+
+		if (
+			extractedType === 'person'
+			|| extractedType === 'location'
+			|| extractedType === 'organisation'
+			|| extractedType === 'event'
+		) {
+			entityType = extractedType;
+		}
+	});
+
+	return entityType || 'NO RELEVANT ENTITY TYPE';
+}
 
 function getRelevantDataFromFiles(dataPaths) {
 	return new Promise((resolve) => {
@@ -41,15 +68,18 @@ function getRelevantDataFromFiles(dataPaths) {
 
 function clusterEntities(data) {
 	const { rawEntities } = data;
-
 	const clusteredEntities = {};
 	const addEntity = (entity, fileName) => {
 		const { title } = entity;
 		const hasEntity = Object.prototype.hasOwnProperty.call(clusteredEntities, title);
 		if (!hasEntity) {
-			clusteredEntities[title] = [fileName];
+			clusteredEntities[title] = {
+				fileNames: [fileName],
+				...entity,
+			};
 		} else {
-			clusteredEntities[title].push(fileName);
+			const { fileNames } = clusteredEntities[title];
+			fileNames.push(fileName);
 		}
 	};
 
@@ -69,7 +99,21 @@ function clusterEntities(data) {
 }
 
 function splitEntitiesInCategories(data) {
-	console.log(Object.keys(data.rawEntities).length);
+	const { rawEntities } = data;
+
+	// TODO: Use .filter()
+	Object.keys(rawEntities).forEach((entityKey) => {
+		const { types } = rawEntities[entityKey];
+		if (types && types.length > 0) {
+			console.log(entityKey);
+			// console.log(rawEntities[entityKey]);
+
+			const relevantEntityType = getRelevantEntityType(types);
+			console.log(relevantEntityType);
+		}
+	});
+
+	return data;
 }
 
 function createGraphcoolBriefingBook() {
