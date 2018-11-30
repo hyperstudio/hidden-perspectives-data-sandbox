@@ -11,13 +11,9 @@ const collectEntitiesFromDataItem = require('./collectEntitiesFromDataItem');
 const convertExcelToJSON = require('../utils/convertExcelToJSON');
 const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
-<<<<<<< HEAD
-// const extractAndSaveOriginals = require('./extractAndSaveOriginals');
-=======
 const extractAndAddTranscripts = require('./extractAndAddTranscripts');
 
 const startDate = new Date();
->>>>>>> 9fb608f17c6656d89decf5333325f76c9ee2366a
 
 const logDataStats = (data) => {
 	const { documents, events } = data;
@@ -108,17 +104,9 @@ convertExcelToJSON(['documents', 'events'])
 	.then(extractAndSaveKinds)
 	.then(extractAndSaveClassifications)
 	.then(extractAndSaveStakeholders)
-<<<<<<< HEAD
 	.then(extractAndSaveEntities)
 	// .then(extractAndSaveOriginals) // Save files and check if already existing
-	// .then(extractAndSaveTranscripts)
-	.then(logSuccessMessage)
-	.catch(abortWithError);
-=======
-	// .then(extractAndSaveEntities) // continue here
-	.catch(abortWithError)
 	.then(extractAndAddTranscripts)
 	.then(saveDocumentsAndEvents)
-	// .then(extractAndSaveOriginals)
-	.then(logSuccessMessage);
->>>>>>> 9fb608f17c6656d89decf5333325f76c9ee2366a
+	.then(logSuccessMessage)
+	.catch(abortWithError);
