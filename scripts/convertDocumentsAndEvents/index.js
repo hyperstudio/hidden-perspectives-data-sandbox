@@ -11,6 +11,7 @@ const collectEntitiesFromDataItem = require('./collectEntitiesFromDataItem');
 const convertExcelToJSON = require('../utils/convertExcelToJSON');
 const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
+const extractAndSaveTranscripts = require('./extractAndSaveTranscripts');
 
 const logDataStats = (data) => {
 	const { documents, events } = data;
@@ -78,6 +79,6 @@ convertExcelToJSON(['documents', 'events'])
 	.then(extractAndSaveStakeholders)
 	.then(extractAndSaveEntities) // continue here
 	.catch(abortWithError)
-	// // .then(extractAndSaveTranscripts)
-	// // .then(extractAndSaveOriginals)
+	.then(extractAndSaveTranscripts)
+	// .then(extractAndSaveOriginals)
 	.then(logSuccessMessage);
