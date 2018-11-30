@@ -5,6 +5,7 @@ const { ERROR_TYPES } = require('../constants');
 const { getPathByConstantName } = require('../utils/pathUtil');
 const isDocumentData = require('../utils/isDocumentData');
 const abortWithError = require('../utils/abortWithError');
+const logger = require('../utils/logger');
 
 function getEntitiesFromFile(fileName) { // TODO: Use `id` instead `fileName` as key name
 	return new Promise((resolve, reject) => {
@@ -134,24 +135,34 @@ function onEntitiesSaveError(err) {
 	abortWithError(err);
 }
 
-function onEntitiesParseError(err) {
-	abortWithError(err);
-}
-
 function collectEntitiesFromDataItem(dataItem, allDataItems) {
 	return new Promise((resolve, reject) => getEntitiesFromFile(dataItem.fileName)
 		.then((entities) => {
-			console.log('EXTRACTING AND SAVING ENTITIES:');
-			console.log('————————————————————————————————————————————————————');
+			logger.logKeyValuePair({
+				key: 'Extracting entities for',
+				value: dataItem.fileName,
+			});
 
 			if (!entities) {
-				console.log('NO ENTITY FOUND IN FILE: Extracting from Dandelion API.');
+				logger.logKeyValuePair({
+					key: 'No entity found in file',
+					value: 'Extracting from Dandelion API',
+				});
+
 				const stringToBeAnalyzed = getStringToBeAnalyzed(dataItem);
 				return getEntitiesFromDandelion(stringToBeAnalyzed)
-					.then((resolvedEntities) => resolve({ entities: resolvedEntities, dataItem, allDataItems }))
+					.then(saveEntity)
+					.catch(onEntitiesSaveError)
+					.then((resolvedEntities) => resolve({
+						entities: resolvedEntities, dataItem, allDataItems,
+					}))
 					.catch((err) => reject(parseDandelionError(err), dataItem, allDataItems));
 			}
-			console.log('FOUND ENTITY IN FILE: Skipping Dandelion query.');
+
+			logger.logKeyValuePair({
+				key: 'Found entity in file',
+				value: 'Skipping Dandelion query',
+			});
 			return resolve({ entities, dataItem, allDataItems });
 		}));
 }
@@ -175,23 +186,15 @@ const getOnEntitiesCollectionErrorHandler = ({
 	return reject(err);
 };
 
-const logEntities = ({ entities, dataItem, allDataItems }) => new Promise((resolve) => {
-	console.log(`EXTRACTED ENTITIES: ${entities.length} from ${dataItem.fileName}`);
-	console.log('————————————————————————————————————————————————————\n\n');
-
-	resolve({ entities, dataItem, allDataItems });
-});
-
 function getAndSaveEntitiesForDataItem(dataItem, allDataItems) {
 	return new Promise((resolve, reject) => collectEntitiesFromDataItem(dataItem, allDataItems)
-		.then(saveEntity)
-		.catch(onEntitiesSaveError)
-		.then(logEntities)
-		.catch(onEntitiesParseError)
 		.then(collectEntitiesForNextDataItem)
 		.catch(getOnEntitiesCollectionErrorHandler({
 			reject,
-			resolve: () => resolve(allDataItems),
+			resolve: () => {
+				logger.logEnd();
+				return resolve(allDataItems);
+			},
 		})));
 }
 
