@@ -96,8 +96,9 @@ function convertExcelToJSON(workbookTypes) {
 		const workbookPaths = workbookTypes.map((workbookType) => {
 			const workbookParentPath = getPathByConstantName('RAW_WORKBOOKS_DIRECTORY_PATH');
 			const directoryPath = `${workbookParentPath}/${workbookType}`;
-			const workbooksAll = fs.readdirSync(directoryPath).map((file) => path
-				.join(directoryPath, file));
+			const workbooksAll = fs.readdirSync(directoryPath)
+				.filter((file) => file.includes('.xlsx'))
+				.map((file) => path.join(directoryPath, file));
 			return {
 				type: workbookType,
 				paths: workbooksAll,
