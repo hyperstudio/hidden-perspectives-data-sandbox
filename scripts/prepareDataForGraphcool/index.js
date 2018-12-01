@@ -1,8 +1,11 @@
 const fs = require('fs');
+const cliProgress = require('cli-progress');
 
 // Util scripts
+const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
+
 
 function getNumberOfDataItems(data) {
 	const isArray = Array.isArray(data);
@@ -11,9 +14,10 @@ function getNumberOfDataItems(data) {
 	return dataLength;
 }
 
+// TODO: Which entities are relevant?
 function getRelevantEntityType(entityTypes) {
 	let entityType;
-	// console.log(entityTypes);
+	const relevantEntityTypes = ['person', 'location', 'organisation', 'event'];
 
 	entityTypes.forEach((type) => {
 		const regexPattern = '[^/]+$';
@@ -21,17 +25,14 @@ function getRelevantEntityType(entityTypes) {
 		const matchedReg = type.match(regex);
 		const extractedType = matchedReg[0].toLowerCase();
 
-		if (
-			extractedType === 'person'
-			|| extractedType === 'location'
-			|| extractedType === 'organisation'
-			|| extractedType === 'event'
-		) {
+		const isRelevantEntityType = relevantEntityTypes.includes(extractedType);
+
+		if (isRelevantEntityType) {
 			entityType = extractedType;
 		}
 	});
 
-	return entityType || 'NO RELEVANT ENTITY TYPE';
+	return entityType || '';
 }
 
 function getRelevantDataFromFiles(dataPaths) {
@@ -39,16 +40,14 @@ function getRelevantDataFromFiles(dataPaths) {
 		const dataPathsKeys = Object.keys(dataPaths);
 		const data = {};
 
-		console.log('READ DATA FROM FILES:');
-		console.log('————————————————————————————————————————————————————');
-
+		logger.logTitle('Read data from files:');
 		dataPathsKeys.forEach((dataPathKey) => {
 			const dataPath = dataPaths[dataPathKey];
 			try {
 				const rawDataFromFile = fs.readFileSync(dataPath, 'utf8');
 				const dataFromFile = JSON.parse(rawDataFromFile);
 
-				console.log(`✓ ${dataPathKey}`);
+				logger.logKeyValuePair({ key: `${dataPathKey}`, value: '✓' });
 
 				data[dataPathKey] = dataFromFile;
 			} catch (error) {
@@ -59,8 +58,7 @@ function getRelevantDataFromFiles(dataPaths) {
 				}
 			}
 		});
-
-		console.log('————————————————————————————————————————————————————\n\n');
+		logger.logEnd();
 
 		resolve(data);
 	});
@@ -98,50 +96,134 @@ function clusterEntities(data) {
 	return { ...data, rawEntities: clusteredEntities };
 }
 
-function splitEntitiesInCategories(data) {
+function splitEntityTypes(data) {
 	const { rawEntities } = data;
 
-	// TODO: Use .filter()
 	Object.keys(rawEntities).forEach((entityKey) => {
-		const { types } = rawEntities[entityKey];
-		if (types && types.length > 0) {
-			console.log(entityKey);
-			// console.log(rawEntities[entityKey]);
+		const entity = rawEntities[entityKey];
 
+		const { types } = entity;
+		if (types && types.length > 0) {
 			const relevantEntityType = getRelevantEntityType(types);
-			console.log(relevantEntityType);
+			entity.relevantType = relevantEntityType;
+
+			// console.log(rawEntities[entityKey].fileNames.length);
+			// console.log(entityKey);
+			// console.log(types);
 		}
 	});
 
 	return data;
 }
 
-function createGraphcoolBriefingBook() {
+function createTagsFromEntities() {
 
+}
+
+function createGraphcoolBriefingBook() {
+	const bbFields = {
+		id: 'uirXXX',
+		briefingBookDescription: 'A description',
+		briefingBookTitle: 'Title',
+		createdAt: new Date(),
+		mentionedDocuments: [], // Document relations
+		mentionedEvents: [], // Event relations
+		mentionedStakeholders: [], // Stakeholder relations
+	};
 }
 
 function createGraphcoolClassification() {
-
+	const classificationFields = {
+		id: 'generated id with chronos',
+		documentsWithClassification: [], // Document relations
+		name: 'classification name',
+	};
 }
 
 function createGraphcoolDocument() {
-
+	const documentFields = {
+		id: 'uirXXX',
+		briefingBooksMentionedIn: [],
+		createdAt: new Date(),
+		dnsaAbstract: null,
+		dnsaCitation: null,
+		dnsaCollection: null,
+		dnsaFrom: null,
+		dnsaItemNumber: null,
+		dnsaOrigin: null,
+		dnsaStakeholder: null,
+		dnsaSubject: null,
+		dnsaTo: null,
+		dnsaUrl: null,
+		documentAuthors: [],
+		documentClassification: [],
+		documentCreationDate: 'date time',
+		documentDescription: '',
+		documentDuplicates: [],
+		documentFiles: [],
+		documentKind: [],
+		documentMediaType: 'RawText',
+		documentOriginalID: '',
+		documentPublicationDate: 'date time',
+		documentTitle: '',
+		mentionedEvents: [],
+		mentionedLocations: [],
+		mentionedStakeholders: [],
+		sessionNumber: 1,
+	};
 }
 
 function createGraphcoolEvent() {
-
+	const eventFields = {
+		id: 'generated id with chronos',
+		briefingBooksMentionedIn: [], // BB relations
+		createdAt: new Date(),
+		documentsMentionedIn: [], // Document relations
+		eventDescription: 'What an event!',
+		eventEndDate: 'DateTime!',
+		eventLocations: [], // Event relations
+		eventStakeholders: [], // Stakeholders relations
+		eventStartDate: 'DateTime!',
+		eventTimeUnit: 'decades',
+		eventTitle: 'Halloween',
+	};
 }
 
 function createGraphcoolKind() {
-
+	const kindFields = {
+		id: 'generated id with chronos',
+		documentsWithClassification: [], // Document relations
+		name: 'kind name',
+	};
 }
 
 function createGraphcoolLocation() {
-
+	const locationFields = {
+		id: 'generated id with chronos',
+		createdAt: new Date(),
+		documentsMentionedIn: [], // Document relations
+		locationDescription: 'This is a very nice location',
+		locationEvents: [], // Event relations
+		locationLatitude: 123 || null,
+		locationLongitude: 321 || null,
+		locationName: 'Best location',
+		locationPlace: '?',
+		locationWikipediaUri: 'http://',
+	};
 }
 
 function createGraphcoolStackeholder() {
-
+	const stakeholderFields = {
+		id: 'generated id with chronos',
+		briefingBooksMentionedIn: [], // BB relations
+		createdAt: new Date(),
+		documents: [], // Documents authored
+		documentsMentionedIn: [], // Document relations
+		eventsInvolvedIn: [], // Event relations
+		isStakeholderInstitution: false,
+		stakeholderFullName: 'Hans Müller',
+		locationWikipediaUri: 'http://',
+	};
 }
 
 function createGraphcoolFile() {
@@ -149,7 +231,11 @@ function createGraphcoolFile() {
 }
 
 function createGraphcoolRelations() {
-
+	// createStakeholdersRelations();
+	// createTagsRelations();
+	// createKindsRelations();
+	// createClassificationsRelations();
+	// createLocationsRelations();
 }
 
 const relevantDataPaths = {
@@ -162,9 +248,10 @@ const relevantDataPaths = {
 
 getRelevantDataFromFiles(relevantDataPaths)
 	.then(clusterEntities)
-	.then(splitEntitiesInCategories)
-	// // Create Graphcool NODES
-	// .then(createGraphcoolBriefingBook)
+	.then(splitEntityTypes)
+	// .then(createTagsFromEntities)
+	// Create Graphcool NODES
+	.then(createGraphcoolBriefingBook)
 	// .then(createGraphcoolClassification)
 	// .then(createGraphcoolDocument)
 	// .then(createGraphcoolEvent)
@@ -174,5 +261,5 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createGraphcoolFile) // System?
 	// // Create Graphcool RELATIONS
 	// .then(createGraphcoolRelations)
-	.then(() => console.log('done'))
+	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
