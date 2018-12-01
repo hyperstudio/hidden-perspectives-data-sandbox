@@ -1,5 +1,3 @@
-const writeFile = require('../utils/writeFile');
-const { getPathByConstantName } = require('../utils/pathUtil');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 
 // const relationFields = {

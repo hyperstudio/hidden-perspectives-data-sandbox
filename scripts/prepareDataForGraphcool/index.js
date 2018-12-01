@@ -72,33 +72,33 @@ function getRelevantDataFromFiles(dataPaths) {
 function clusterEntities(data) {
 	const { rawEntities } = data;
 	const clusteredEntities = {};
-	const addEntity = (entity, fileName) => {
+	const addEntity = (entity, fileName, originalString) => {
 		const { title } = entity;
 		const hasEntity = Object.prototype.hasOwnProperty.call(clusteredEntities, title);
 		if (!hasEntity) {
 			clusteredEntities[title] = {
-				fileNames: [fileName],
+				fileNames: [{ fileName, originalString }],
 				...entity,
 			};
 		} else {
 			const { fileNames } = clusteredEntities[title];
-			fileNames.push(fileName);
+			fileNames.push({ fileName, originalString });
 		}
 	};
 
 	rawEntities.forEach((datum) => {
-		const { entities, fileName } = datum;
+		const { entities, fileName, originalString } = datum;
 
 		if (entities && entities instanceof Array) {
 			entities.forEach((entity) => {
-				addEntity(entity, fileName);
+				addEntity(entity, fileName, originalString);
 			});
 		} else {
-			addEntity(entities, fileName);
+			addEntity(entities, fileName, originalString);
 		}
 	});
 
-	return { ...data, rawEntities: clusteredEntities };
+	return { ...data, entities: Object.values(clusteredEntities) };
 }
 
 function splitEntityTypes(data) {
@@ -216,12 +216,12 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createTagsFromEntities)
 	// Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
-	.then(createGraphcoolClassification)
+	// .then(createGraphcoolClassification)
 	// .then(createGraphcoolEvent)
 	// .then(createGraphcoolKind)
 	// .then(createGraphcoolLocation)
-	// .then(createGraphcoolStackeholders)
-	.then(createGraphcoolDocuments)
+	.then(createGraphcoolStackeholders)
+	// .then(createGraphcoolDocuments)
 	// .then(createGraphcoolFileRelation) // System?
 	// // Create Graphcool RELATIONS
 	// .then(createGraphcoolRelations)
