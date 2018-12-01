@@ -11,8 +11,9 @@ const graphcoolDataImport = require('../utils/graphcoolDataImport');
 // Scripts
 const createGraphcoolClassifications = require('./createGraphcoolClassifications');
 const createGraphcoolDocuments = require('./createGraphcoolDocuments');
-const createGraphcoolStackeholders = require('./createGraphcoolStackeholders');
+const createGraphcoolStakeholders = require('./createGraphcoolStakeholders');
 const createGraphcoolKinds = require('./createGraphcoolKinds');
+const createGraphcoolEvents = require('./createGraphcoolEvents');
 
 
 function getNumberOfDataItems(data) {
@@ -140,22 +141,6 @@ function createGraphcoolBriefingBook() {
 	};
 }
 
-function createGraphcoolEvent() {
-	const eventFields = {
-		id: 'generated id with chronos',
-		briefingBooksMentionedIn: [], // BB relations
-		createdAt: new Date(),
-		documentsMentionedIn: [], // Document relations
-		eventDescription: 'What an event!',
-		eventEndDate: 'DateTime!',
-		eventLocations: [], // Event relations
-		eventStakeholders: [], // Stakeholders relations
-		eventStartDate: 'DateTime!',
-		eventTimeUnit: 'decades',
-		eventTitle: 'Halloween',
-	};
-}
-
 function createGraphcoolLocation() {
 	const locationFields = {
 		id: 'generated id with chronos',
@@ -212,12 +197,12 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createTagsFromEntities)
 	// Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
-	.then(createGraphcoolClassifications)
-	// .then(createGraphcoolEvent)
-	.then(createGraphcoolKinds)
+	// .then(createGraphcoolClassifications)
+	// .then(createGraphcoolKinds)
 	// .then(createGraphcoolLocation)
-	// .then(createGraphcoolStackeholders)
-	.then(createGraphcoolDocuments)
+	// .then(createGraphcoolStakeholders)
+	.then(createGraphcoolEvents)
+	// .then(createGraphcoolDocuments)
 	// .then(graphcoolDataImport)
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);

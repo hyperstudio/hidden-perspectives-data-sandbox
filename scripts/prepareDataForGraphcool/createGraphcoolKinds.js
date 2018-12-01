@@ -74,7 +74,6 @@ function createGraphcoolKinds(data) {
 		.catch((err) => {
 			throw new Error(err);
 		});
-
 }
 
 module.exports = createGraphcoolKinds;

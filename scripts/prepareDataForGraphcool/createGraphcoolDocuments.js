@@ -55,17 +55,14 @@ const createDocumentNode = ({
 	sessionNumber,
 });
 
-const createGraphcoolDocuments = (data) => {
-	const documentNodes = data.documents.map(createDocumentNode);
-	return saveGraphcoolData({
-		data: documentNodes,
-		type: 'nodes',
-		fileName: 'documentsNodes.json',
-	})
-		.then(() => Promise.resolve(data))
-		.catch((err) => {
-			throw new Error(err);
-		});
-};
+const createGraphcoolDocuments = (data) => saveGraphcoolData({
+	data: data.documents.map(createDocumentNode),
+	type: 'nodes',
+	fileName: 'documentsNodes.json',
+})
+	.then(() => Promise.resolve(data))
+	.catch((err) => {
+		throw new Error(err);
+	});
 
 module.exports = createGraphcoolDocuments;

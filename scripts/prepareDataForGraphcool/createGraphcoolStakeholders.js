@@ -22,7 +22,7 @@ const createStakeholdersNode = ({
 	...(uri ? { uri } : {}),
 });
 
-const getStakeholdersRelationCreator => (documents) => (entity) => {
+const getStakeholdersRelationCreator = (documents) => (entity) => {
 	return {
 
 	};
