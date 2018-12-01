@@ -46,7 +46,7 @@ function createClassificationRelation({ id }, documentID) {
 	return [relationClassification, relationDocument];
 }
 
-function createGraphcoolClassification(data) {
+function createGraphcoolClassifications(data) {
 	const { classifications } = data;
 
 	const classificationNames = Object.keys(classifications);
@@ -63,9 +63,11 @@ function createGraphcoolClassification(data) {
 			.map((docId) => createClassificationRelation(classificationNode, docId));
 	});
 
+	const flattenedClassificationRelations = [].concat(...classificationRelations);
+
 	return Promise.all([
 		saveClassificationNode(classificationNodes),
-		saveClassificationRelations(classificationRelations),
+		saveClassificationRelations(flattenedClassificationRelations),
 	])
 		.then(() => Promise.resolve(data))
 		.catch((err) => {
@@ -73,4 +75,4 @@ function createGraphcoolClassification(data) {
 		});
 }
 
-module.exports = createGraphcoolClassification;
+module.exports = createGraphcoolClassifications;

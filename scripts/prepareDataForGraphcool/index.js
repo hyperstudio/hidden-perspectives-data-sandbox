@@ -7,9 +7,10 @@ const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
 
 // Scripts
-const createGraphcoolClassification = require('./createGraphcoolClassification');
+const createGraphcoolClassifications = require('./createGraphcoolClassifications');
 const createGraphcoolDocuments = require('./createGraphcoolDocuments');
 const createGraphcoolStackeholders = require('./createGraphcoolStackeholders');
+const createGraphcoolKinds = require('./createGraphcoolKinds');
 
 
 function getNumberOfDataItems(data) {
@@ -153,14 +154,6 @@ function createGraphcoolEvent() {
 	};
 }
 
-function createGraphcoolKind() {
-	const kindFields = {
-		id: 'generated id with chronos',
-		documentsWithClassification: [], // Document relations
-		name: 'kind name',
-	};
-}
-
 function createGraphcoolLocation() {
 	const locationFields = {
 		id: 'generated id with chronos',
@@ -202,6 +195,10 @@ function createGraphcoolRelations() {
 	// createLocationsRelations();
 }
 
+function graphcoolDataImport() {
+
+}
+
 const relevantDataPaths = {
 	documents: getPathByConstantName('DOCUMENTS_DATA_PATH'),
 	events: getPathByConstantName('EVENTS_DATA_PATH'),
@@ -216,14 +213,12 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createTagsFromEntities)
 	// Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
-	.then(createGraphcoolClassification)
+	.then(createGraphcoolClassifications)
 	// .then(createGraphcoolEvent)
-	// .then(createGraphcoolKind)
+	.then(createGraphcoolKinds)
 	// .then(createGraphcoolLocation)
 	// .then(createGraphcoolStackeholders)
 	.then(createGraphcoolDocuments)
-	// .then(createGraphcoolFileRelation) // System?
-	// // Create Graphcool RELATIONS
-	// .then(createGraphcoolRelations)
+	.then(graphcoolDataImport)
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
