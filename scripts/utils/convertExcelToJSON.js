@@ -1,6 +1,9 @@
 const Excel = require('exceljs');
 const path = require('path');
 const fs = require('fs');
+const cliProgress = require('cli-progress');
+const logger = require('../utils/logger');
+
 const { getPathByConstantName } = require('./pathUtil');
 
 function DocumentData(data) {
@@ -61,13 +64,10 @@ const readSheet = (sheetPath, workbookType) => {
 	return workbook.xlsx.readFile(sheetPath).then(() => {
 		const worksheet = workbook.getWorksheet(1);
 
-		// Iterate over all rows (including empty rows) in a worksheet
 		worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-			// first row is the table header
 			if (rowNumber > 1 && row.getCell(1).value) {
 				const rowData = [];
 
-				// Iterate over all cells in a row (including empty cells)
 				row.eachCell({ includeEmpty: true }, (cell) => {
 					rowData.push(cell.value);
 				});
@@ -84,25 +84,39 @@ const readSheet = (sheetPath, workbookType) => {
 		});
 
 		return worksheetRows;
-	}).catch((err) => {
-		console.log('Error reading the spreadsheet:', err);
-	});
+	})
+		.catch((err) => Promise.reject(err));
 };
 
 function convertExcelToJSON(workbookTypes) {
 	return new Promise((resolveWholeConversion) => {
-		const excelDataPromises = workbookTypes
-			.map((workbookType) => new Promise((resolveTypeConversion) => {
-				const workbookParentPath = getPathByConstantName('RAW_WORKBOOKS_DIRECTORY_PATH');
-				const directoryPath = `${workbookParentPath}/${workbookType}`;
+		logger.logTitle('Reading and converting CSV Spreadsheets');
+		const progressBar = new cliProgress.Bar({}, cliProgress.Presets.shades_classic);
 
-				const workbooksAll = fs.readdirSync(directoryPath).map((file) => {
-					const filePath = path.join(directoryPath, file);
-					return filePath;
-				});
+		const workbookPaths = workbookTypes.map((workbookType) => {
+			const workbookParentPath = getPathByConstantName('RAW_WORKBOOKS_DIRECTORY_PATH');
+			const directoryPath = `${workbookParentPath}/${workbookType}`;
+			const workbooksAll = fs.readdirSync(directoryPath).map((file) => path
+				.join(directoryPath, file));
+			return {
+				type: workbookType,
+				paths: workbooksAll,
+			};
+		});
 
-				const worksheetPromises = workbooksAll.map(
-					(workbookPath) => readSheet(workbookPath, workbookType),
+		const totalLength = workbookPaths.reduce((acc, { paths }) => (
+			acc + paths.length
+		), 0);
+		let progressbarSteps = 0;
+		progressBar.start(totalLength, 0);
+
+		const excelDataPromises = workbookPaths
+			.map(({ type, paths }) => new Promise((resolveTypeConversion) => {
+				const worksheetPromises = paths.map(
+					(workbookPath) => {
+						progressBar.update(progressbarSteps += 1);
+						return readSheet(workbookPath, type);
+					},
 				);
 
 				Promise.all(worksheetPromises)
@@ -114,7 +128,10 @@ function convertExcelToJSON(workbookTypes) {
 			}));
 
 		Promise.all(excelDataPromises)
-			.then(([documents, events]) => resolveWholeConversion({ documents, events }))
+			.then(([documents, events]) => {
+				logger.logEnd();
+				resolveWholeConversion({ documents, events });
+			})
 			.catch(console.log);
 	});
 }

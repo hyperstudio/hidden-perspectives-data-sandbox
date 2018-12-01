@@ -25,11 +25,12 @@ const logSuccessMessage = () => {
 		value: duration,
 	});
 	logEnd();
+	process.exit(0);
 };
 
 const logDataStats = (data) => {
 	const { documents, events } = data;
-	logTitle('Processing data');
+	logTitle('Data found in spreadsheets');
 	logKeyValuePair({ key: 'Documents', value: documents.length });
 	logKeyValuePair({ key: 'Events', value: events.length });
 
