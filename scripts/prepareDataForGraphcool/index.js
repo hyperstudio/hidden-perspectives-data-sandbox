@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const cliProgress = require('cli-progress');
 
@@ -5,6 +6,7 @@ const cliProgress = require('cli-progress');
 const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
+const graphcoolDataImport = require('../utils/graphcoolDataImport');
 
 // Scripts
 const createGraphcoolClassifications = require('./createGraphcoolClassifications');
@@ -195,9 +197,6 @@ function createGraphcoolRelations() {
 	// createLocationsRelations();
 }
 
-function graphcoolDataImport() {
-
-}
 
 const relevantDataPaths = {
 	documents: getPathByConstantName('DOCUMENTS_DATA_PATH'),
@@ -219,6 +218,6 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createGraphcoolLocation)
 	// .then(createGraphcoolStackeholders)
 	.then(createGraphcoolDocuments)
-	.then(graphcoolDataImport)
+	// .then(graphcoolDataImport)
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
