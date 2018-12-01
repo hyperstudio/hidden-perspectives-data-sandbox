@@ -1,22 +1,25 @@
-const fs = require('fs');
 const unirest = require('unirest');
+const cliProgress = require('cli-progress');
 
 const { ERROR_TYPES } = require('../constants');
 const { getPathByConstantName } = require('../utils/pathUtil');
 const isDocumentData = require('../utils/isDocumentData');
 const abortWithError = require('../utils/abortWithError');
 const logger = require('../utils/logger');
+const readFile = require('../utils/readFile');
+const writeFile = require('../utils/writeFile');
 
-function getEntitiesFromFile(fileName) { // TODO: Use `id` instead `fileName` as key name
+function getEntitiesFromFile(fileName) {
 	return new Promise((resolve, reject) => {
 		const rawEntitiesPath = getPathByConstantName('RAW_ENTITIES');
-		fs.readFile(rawEntitiesPath, 'utf8', (error, fileData) => {
-			if (error) return reject(error);
+		return readFile(rawEntitiesPath)
+			.then((fileData) => {
+				const entities = JSON.parse(fileData);
 
-			const entities = JSON.parse(fileData);
-			const entityInFile = entities.find((entity) => entity.fileName === fileName);
-			return resolve(entityInFile && entityInFile.entities);
-		});
+				const entityInFile = entities.find((entity) => entity.fileName === fileName);
+				return resolve(entityInFile && entityInFile.entities);
+			})
+			.catch(reject);
 	});
 }
 
@@ -93,29 +96,25 @@ function parseEntityDandelionResponse(response) {
 
 const saveEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolve, reject) => {
 	const rawEntitiesPath = getPathByConstantName('RAW_ENTITIES');
-	fs.readFile(rawEntitiesPath, 'utf8', (error, fileData) => {
-		if (error) return reject(error);
+	readFile(rawEntitiesPath)
+		.then((fileData) => {
+			const allEntities = JSON.parse(fileData);
 
-		const allEntities = JSON.parse(fileData);
+			const entityInFile = allEntities
+				.find((entity) => entity.fileName === dataItem.fileName);
 
-		const entityInFile = allEntities.find((entity) => entity.fileName === dataItem.fileName);
-		if (entityInFile) return resolve({ entities, dataItem, allDataItems });
+			if (entityInFile) return resolve({ entities, dataItem, allDataItems });
 
-		allEntities.push({
-			entities,
-			fileName: dataItem.fileName,
-		});
+			allEntities.push({
+				entities,
+				fileName: dataItem.fileName,
+			});
 
-		return fs.writeFile(
-			rawEntitiesPath,
-			JSON.stringify(allEntities),
-			'utf8',
-			(err) => {
-				if (err) return reject(err);
-				return resolve({ entities, dataItem, allDataItems });
-			},
-		);
-	});
+			return allEntities;
+		})
+		.then((allEntities) => writeFile(rawEntitiesPath, allEntities))
+		.then(() => resolve({ entities, dataItem, allDataItems }))
+		.catch(reject);
 });
 
 function parseDandelionError(error) {
@@ -138,20 +137,14 @@ function onEntitiesSaveError(err) {
 function collectEntitiesFromDataItem(dataItem, allDataItems) {
 	return new Promise((resolve, reject) => getEntitiesFromFile(dataItem.fileName)
 		.then((entities) => {
-			logger.logKeyValuePair({
-				key: 'Extracting entities for',
-				value: dataItem.fileName,
-			});
-
 			if (!entities) {
-				logger.logKeyValuePair({
-					key: 'No entity found in file',
-					value: 'Extracting from Dandelion API',
-				});
-
 				const stringToBeAnalyzed = getStringToBeAnalyzed(dataItem);
 				return getEntitiesFromDandelion(stringToBeAnalyzed)
-					.then(saveEntity)
+					.then((requestedEntities) => saveEntity({
+						entities: requestedEntities,
+						dataItem,
+						allDataItems,
+					}))
 					.catch(onEntitiesSaveError)
 					.then((resolvedEntities) => resolve({
 						entities: resolvedEntities, dataItem, allDataItems,
@@ -159,10 +152,6 @@ function collectEntitiesFromDataItem(dataItem, allDataItems) {
 					.catch((err) => reject(parseDandelionError(err), dataItem, allDataItems));
 			}
 
-			logger.logKeyValuePair({
-				key: 'Found entity in file',
-				value: 'Skipping Dandelion query',
-			});
 			return resolve({ entities, dataItem, allDataItems });
 		}));
 }
@@ -171,7 +160,7 @@ function collectEntitiesForNextDataItem({ dataItem, allDataItems }) {
 	const indexOfDataItem = allDataItems.findIndex(hasSameId(dataItem.fileName));
 	const indexOfNextDataItem = indexOfDataItem + 1;
 	const nextDataItem = allDataItems[indexOfNextDataItem];
-	if (indexOfDataItem > allDataItems.length - 1) {
+	if (indexOfDataItem === allDataItems.length - 1) {
 		return Promise.reject(ERROR_TYPES.NO_ENTITY_LEFT_TO_QUERY);
 	}
 	return getAndSaveEntitiesForDataItem(nextDataItem, allDataItems);
@@ -186,13 +175,24 @@ const getOnEntitiesCollectionErrorHandler = ({
 	return reject(err);
 };
 
+let progressBarProgess = 0;
+const progressBar = new cliProgress.Bar({}, cliProgress.Presets.shades_classic);
 function getAndSaveEntitiesForDataItem(dataItem, allDataItems) {
+	if (progressBarProgess === 0) {
+		progressBar.start(allDataItems.length, 0);
+	}
 	return new Promise((resolve, reject) => collectEntitiesFromDataItem(dataItem, allDataItems)
+		.then((data) => {
+			progressBarProgess += 1;
+			progressBar.update(progressBarProgess);
+			return data;
+		})
 		.then(collectEntitiesForNextDataItem)
 		.catch(getOnEntitiesCollectionErrorHandler({
 			reject,
 			resolve: () => {
 				logger.logEnd();
+				progressBar.stop();
 				return resolve(allDataItems);
 			},
 		})));

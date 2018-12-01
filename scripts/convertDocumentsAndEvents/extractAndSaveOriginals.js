@@ -1,3 +1,4 @@
+const cliProgress = require('cli-progress');
 const { getPathByConstantName } = require('../utils/pathUtil');
 const { uploadFile } = require('../utils/fileUpload');
 const readFile = require('../utils/readFile');
@@ -5,6 +6,9 @@ const writeFile = require('../utils/writeFile');
 const getPathsInDir = require('../utils/getPathsInDir');
 const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
+
+let progressBarProgess = 0;
+const progressBar = new cliProgress.Bar({}, cliProgress.Presets.shades_classic);
 
 const getFileConnector = (files) => (document) => {
 	const file = files.find(({ name }) => `${document.fileName}.pdf` === name);
@@ -66,20 +70,13 @@ const getUploadSequenceReducer = (originalsParentPath, files) => (
 		).then((file) => uploadFile(fullFileName, file)),
 	)
 	.then((fileObject) => {
-		logger.logKeyValuePair({
-			key: 'File successfully uploaded',
-			value: fileObject.id,
-			origin: fullFileName,
-		});
 		files.push(fileObject);
 		return fileObject;
 	}))
 	.then(saveFile)
 	.then((fileObject) => {
-		logger.logKeyValuePair({
-			key: 'File successfully saved',
-			value: fileObject.name,
-		});
+		progressBarProgess += 1;
+		progressBar.update(progressBarProgess);
 		return fileObject;
 	});
 
@@ -96,9 +93,14 @@ const uploadFilesInSequence = (originalsParentPath, paths) => new Promise((resol
 const extractAndSaveOriginals = (data) => {
 	logger.logTitle('Extracting and saving the original document files');
 	const originalsParentPath = getPathByConstantName('ORIGINAL_DOCUMENT_DIRECTORY_PATH');
+	progressBar.start(data.documents.length + data.events.length, 0);
 	return getPathsInDir(originalsParentPath)
 		.then((paths) => uploadFilesInSequence(originalsParentPath, paths))
 		.then((files) => connectDataToOriginals(data, files))
+		.then((extendedData) => {
+			progressBar.stop();
+			return extendedData;
+		})
 		.catch(abortWithError);
 };
 
