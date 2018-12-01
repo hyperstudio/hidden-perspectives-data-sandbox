@@ -13,7 +13,7 @@ function getNumberOfDataItems(data) {
 
 function getRelevantEntityType(entityTypes) {
 	let entityType;
-	// console.log(entityTypes);
+	const relevantEntityTypes = ['person', 'location', 'organisation', 'event'];
 
 	entityTypes.forEach((type) => {
 		const regexPattern = '[^/]+$';
@@ -21,12 +21,9 @@ function getRelevantEntityType(entityTypes) {
 		const matchedReg = type.match(regex);
 		const extractedType = matchedReg[0].toLowerCase();
 
-		if (
-			extractedType === 'person'
-			|| extractedType === 'location'
-			|| extractedType === 'organisation'
-			|| extractedType === 'event'
-		) {
+		const isRelevantEntityType = relevantEntityTypes.includes(extractedType);
+
+		if (isRelevantEntityType) {
 			entityType = extractedType;
 		}
 	});
@@ -98,21 +95,20 @@ function clusterEntities(data) {
 	return { ...data, rawEntities: clusteredEntities };
 }
 
-function splitEntitiesInCategories(data) {
+function splitEntityTypes(data) {
 	const { rawEntities } = data;
 
-	// TODO: Use .filter()
 	Object.keys(rawEntities).forEach((entityKey) => {
-		const { types } = rawEntities[entityKey];
-		if (types && types.length > 0) {
-			console.log(entityKey);
-			// console.log(rawEntities[entityKey]);
+		const entity = rawEntities[entityKey];
 
+		const { types } = entity;
+		if (types && types.length > 0) {
 			const relevantEntityType = getRelevantEntityType(types);
-			console.log(relevantEntityType);
+			entity.relevantType = relevantEntityType;
 		}
 	});
 
+	console.log(data.rawEntities);
 	return data;
 }
 
@@ -162,7 +158,7 @@ const relevantDataPaths = {
 
 getRelevantDataFromFiles(relevantDataPaths)
 	.then(clusterEntities)
-	.then(splitEntitiesInCategories)
+	.then(splitEntityTypes)
 	// // Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
 	// .then(createGraphcoolClassification)
