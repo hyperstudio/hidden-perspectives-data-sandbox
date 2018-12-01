@@ -191,9 +191,9 @@ function getAndSaveEntitiesForDataItem(dataItem, allDataItems) {
 		.catch(getOnEntitiesCollectionErrorHandler({
 			reject,
 			resolve: () => {
-				logger.logEnd();
 				progressBar.stop();
-				return resolve(allDataItems);
+				logger.logEnd();
+				return reject(allDataItems);
 			},
 		})));
 }
