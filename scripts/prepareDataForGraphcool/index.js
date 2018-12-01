@@ -14,6 +14,7 @@ function getNumberOfDataItems(data) {
 	return dataLength;
 }
 
+// TODO: Which entities are relevant?
 function getRelevantEntityType(entityTypes) {
 	let entityType;
 	const relevantEntityTypes = ['person', 'location', 'organisation', 'event'];
@@ -115,32 +116,114 @@ function splitEntityTypes(data) {
 	return data;
 }
 
-function createGraphcoolBriefingBook() {
+function createTagsFromEntities() {
 
+}
+
+function createGraphcoolBriefingBook() {
+	const bbFields = {
+		id: 'uirXXX',
+		briefingBookDescription: 'A description',
+		briefingBookTitle: 'Title',
+		createdAt: new Date(),
+		mentionedDocuments: [], // Document relations
+		mentionedEvents: [], // Event relations
+		mentionedStakeholders: [], // Stakeholder relations
+	};
 }
 
 function createGraphcoolClassification() {
-
+	const classificationFields = {
+		id: 'generated id with chronos',
+		documentsWithClassification: [], // Document relations
+		name: 'classification name',
+	};
 }
 
 function createGraphcoolDocument() {
-
+	const documentFields = {
+		id: 'uirXXX',
+		briefingBooksMentionedIn: [],
+		createdAt: new Date(),
+		dnsaAbstract: null,
+		dnsaCitation: null,
+		dnsaCollection: null,
+		dnsaFrom: null,
+		dnsaItemNumber: null,
+		dnsaOrigin: null,
+		dnsaStakeholder: null,
+		dnsaSubject: null,
+		dnsaTo: null,
+		dnsaUrl: null,
+		documentAuthors: [],
+		documentClassification: [],
+		documentCreationDate: 'date time',
+		documentDescription: '',
+		documentDuplicates: [],
+		documentFiles: [],
+		documentKind: [],
+		documentMediaType: 'RawText',
+		documentOriginalID: '',
+		documentPublicationDate: 'date time',
+		documentTitle: '',
+		mentionedEvents: [],
+		mentionedLocations: [],
+		mentionedStakeholders: [],
+		sessionNumber: 1,
+	};
 }
 
 function createGraphcoolEvent() {
-
+	const eventFields = {
+		id: 'generated id with chronos',
+		briefingBooksMentionedIn: [], // BB relations
+		createdAt: new Date(),
+		documentsMentionedIn: [], // Document relations
+		eventDescription: 'What an event!',
+		eventEndDate: 'DateTime!',
+		eventLocations: [], // Event relations
+		eventStakeholders: [], // Stakeholders relations
+		eventStartDate: 'DateTime!',
+		eventTimeUnit: 'decades',
+		eventTitle: 'Halloween',
+	};
 }
 
 function createGraphcoolKind() {
-
+	const kindFields = {
+		id: 'generated id with chronos',
+		documentsWithClassification: [], // Document relations
+		name: 'kind name',
+	};
 }
 
 function createGraphcoolLocation() {
-
+	const locationFields = {
+		id: 'generated id with chronos',
+		createdAt: new Date(),
+		documentsMentionedIn: [], // Document relations
+		locationDescription: 'This is a very nice location',
+		locationEvents: [], // Event relations
+		locationLatitude: 123 || null,
+		locationLongitude: 321 || null,
+		locationName: 'Best location',
+		locationPlace: '?',
+		locationWikipediaUri: 'http://',
+	};
 }
 
 function createGraphcoolStackeholder() {
-
+	const stakeholderFields = {
+		id: 'generated id with chronos',
+		briefingBooksMentionedIn: [], // BB relations
+		createdAt: new Date(),
+		documents: [], // Documents authored
+		documentsMentionedIn: [], // Document relations
+		eventsInvolvedIn: [], // Event relations
+		isStakeholderInstitution: false,
+		stakeholderFullName: 'Hans Müller',
+		locationWikipediaUri: 'http://',
+	};
 }
 
 function createGraphcoolFile() {
@@ -148,7 +231,11 @@ function createGraphcoolFile() {
 }
 
 function createGraphcoolRelations() {
-
+	// createStakeholdersRelations();
+	// createTagsRelations();
+	// createKindsRelations();
+	// createClassificationsRelations();
+	// createLocationsRelations();
 }
 
 const relevantDataPaths = {
@@ -162,8 +249,9 @@ const relevantDataPaths = {
 getRelevantDataFromFiles(relevantDataPaths)
 	.then(clusterEntities)
 	.then(splitEntityTypes)
-	// // Create Graphcool NODES
-	// .then(createGraphcoolBriefingBook)
+	// .then(createTagsFromEntities)
+	// Create Graphcool NODES
+	.then(createGraphcoolBriefingBook)
 	// .then(createGraphcoolClassification)
 	// .then(createGraphcoolDocument)
 	// .then(createGraphcoolEvent)
@@ -173,5 +261,5 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createGraphcoolFile) // System?
 	// // Create Graphcool RELATIONS
 	// .then(createGraphcoolRelations)
-	.then(() => console.log('done'))
+	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
