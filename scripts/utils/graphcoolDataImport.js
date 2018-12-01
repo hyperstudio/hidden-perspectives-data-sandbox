@@ -9,7 +9,7 @@ function importGraphcoolData({ valueType, values }) {
 
 		const headers = {
 			'Content-Type': 'application/json',
-			Authorization: process.env.DANDELION_AUTHORIZATION_BEARER,
+			Authorization: process.env.GRAPHCOOL_AUTHORIZATION_TOKEN,
 		};
 		const url = 'https://api.graph.cool/simple/v1/hiddenperspectives/import';
 
