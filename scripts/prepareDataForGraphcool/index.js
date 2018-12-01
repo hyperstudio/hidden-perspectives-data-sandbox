@@ -6,6 +6,9 @@ const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
 
+// Scripts
+const createGraphcoolClassification = require('./createGraphcoolClassification');
+
 
 function getNumberOfDataItems(data) {
 	const isArray = Array.isArray(data);
@@ -132,14 +135,6 @@ function createGraphcoolBriefingBook() {
 	};
 }
 
-function createGraphcoolClassification() {
-	const classificationFields = {
-		id: 'generated id with chronos',
-		documentsWithClassification: [], // Document relations
-		name: 'classification name',
-	};
-}
-
 function createGraphcoolDocument() {
 	const documentFields = {
 		id: 'uirXXX',
@@ -251,8 +246,8 @@ getRelevantDataFromFiles(relevantDataPaths)
 	.then(splitEntityTypes)
 	// .then(createTagsFromEntities)
 	// Create Graphcool NODES
-	.then(createGraphcoolBriefingBook)
-	// .then(createGraphcoolClassification)
+	// .then(createGraphcoolBriefingBook)
+	.then(createGraphcoolClassification)
 	// .then(createGraphcoolDocument)
 	// .then(createGraphcoolEvent)
 	// .then(createGraphcoolKind)
