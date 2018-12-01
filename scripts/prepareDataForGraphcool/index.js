@@ -1,8 +1,11 @@
 const fs = require('fs');
+const cliProgress = require('cli-progress');
 
 // Util scripts
+const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
+
 
 function getNumberOfDataItems(data) {
 	const isArray = Array.isArray(data);
@@ -28,7 +31,7 @@ function getRelevantEntityType(entityTypes) {
 		}
 	});
 
-	return entityType || 'NO RELEVANT ENTITY TYPE';
+	return entityType || '';
 }
 
 function getRelevantDataFromFiles(dataPaths) {
@@ -36,16 +39,14 @@ function getRelevantDataFromFiles(dataPaths) {
 		const dataPathsKeys = Object.keys(dataPaths);
 		const data = {};
 
-		console.log('READ DATA FROM FILES:');
-		console.log('————————————————————————————————————————————————————');
-
+		logger.logTitle('Read data from files:');
 		dataPathsKeys.forEach((dataPathKey) => {
 			const dataPath = dataPaths[dataPathKey];
 			try {
 				const rawDataFromFile = fs.readFileSync(dataPath, 'utf8');
 				const dataFromFile = JSON.parse(rawDataFromFile);
 
-				console.log(`✓ ${dataPathKey}`);
+				logger.logKeyValuePair({ key: `${dataPathKey}`, value: '✓' });
 
 				data[dataPathKey] = dataFromFile;
 			} catch (error) {
@@ -56,8 +57,7 @@ function getRelevantDataFromFiles(dataPaths) {
 				}
 			}
 		});
-
-		console.log('————————————————————————————————————————————————————\n\n');
+		logger.logEnd();
 
 		resolve(data);
 	});
@@ -105,10 +105,13 @@ function splitEntityTypes(data) {
 		if (types && types.length > 0) {
 			const relevantEntityType = getRelevantEntityType(types);
 			entity.relevantType = relevantEntityType;
+
+			// console.log(rawEntities[entityKey].fileNames.length);
+			// console.log(entityKey);
+			// console.log(types);
 		}
 	});
 
-	console.log(data.rawEntities);
 	return data;
 }
 
