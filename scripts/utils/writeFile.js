@@ -1,15 +1,17 @@
 const fs = require('fs');
+const logger = require('./logger');
 
-function writeFile(filepath, data) {
-	fs.writeFile(filepath, JSON.stringify(data), 'utf8', () => {
-		const numberOfDataEntries = Object.keys(data).length;
+const writeFile = (filepath, data) => new Promise((resolve, reject) => {
+	fs.writeFile(filepath, JSON.stringify(data), 'utf8', (err) => {
+		if (err) return reject(err);
 
-		console.log('WROTE FILE:');
-		console.log('————————————————————————————————————————————————————');
-		console.log(`Data entries: ${numberOfDataEntries}`);
-		console.log(`File path: ${filepath}`);
-		console.log('————————————————————————————————————————————————————\n\n');
+		logger.logTitle('Wrote file:');
+		logger.logKeyValuePair({ key: 'Data entries', value: Object.keys(data).length });
+		logger.logKeyValuePair({ key: 'File path', value: `\n${filepath}` });
+		logger.logEnd();
+
+		return resolve(data);
 	});
-}
+});
 
 module.exports = writeFile;

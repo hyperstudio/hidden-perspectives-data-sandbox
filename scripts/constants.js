@@ -8,6 +8,7 @@ const FILE_PATHS = {
 	RAW_TEXT_FILES_DIRECTORY_PATH: './data/text_files/',
 	DOCUMENTS_DATA_PATH: './data/json/documents/documentsWithEntitiesAndTextFiles.json',
 	EVENTS_DATA_PATH: './data/json/events/eventsWithEntitiesAndTextFiles.json',
+	FILE_OBJECTS_DATA_PATH: './data/json/files/fileObjects.json',
 };
 
 const ERROR_TYPES = {

@@ -5,6 +5,7 @@ const parseDates = require('../utils/parseDates');
 const writeFile = require('../utils/writeFile');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
+const logger = require('../utils/logger');
 
 // Data handling scripts
 const collectEntitiesFromDataItem = require('./collectEntitiesFromDataItem');
@@ -12,101 +13,91 @@ const convertExcelToJSON = require('../utils/convertExcelToJSON');
 const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
 const extractAndAddTranscripts = require('./extractAndAddTranscripts');
-
-const startDate = new Date();
-
-const logDataStats = (data) => {
-	const { documents, events } = data;
-	console.log('PROCESSING DATA:');
-	console.log('————————————————————————————————————————————————————');
-	console.log(`Documents: ${documents.length}`);
-	console.log(`Events: ${events.length}`);
-	console.log('————————————————————————————————————————————————————\n\n');
-
-	return data;
-};
+const extractAndSaveOriginals = require('./extractAndSaveOriginals');
 
 function extractAndSaveKinds(data) {
-	console.log('EXTRACTING AND SAVING RAW KINDS:');
-	console.log('————————————————————————————————————————————————————');
+	logger.logTitle('Extracting and saving raw kinds');
+
 	const kindsJSONPath = getPathByConstantName('RAW_KINDS');
 	const kindsJSON = createDocumentTagsJSON('kind', data);
 
-	console.log(`Kinds: ${Object.keys(kindsJSON).length}`);
-	writeFile(kindsJSONPath, kindsJSON);
-	console.log('————————————————————————————————————————————————————\n\n');
+	logger.logKeyValuePair({
+		key: 'Kinds',
+		value: Object.keys(kindsJSON).length,
+	});
 
-	return data;
+	return writeFile(kindsJSONPath, kindsJSON)
+		.then(() => data);
 }
 
 function extractAndSaveClassifications(data) {
-	console.log('EXTRACTING AND SAVING RAW CLASSIFICATIONS:');
-	console.log('————————————————————————————————————————————————————');
+	logger.logTitle('Extracting and saving raw classifications');
+
 	const classificationJSONPath = getPathByConstantName('RAW_CLASSIFICATIONS');
 	const classificationJSON = createDocumentTagsJSON('classification', data);
 
-	console.log(`Classifications: ${Object.keys(classificationJSON).length}`);
-	writeFile(classificationJSONPath, classificationJSON);
-	console.log('————————————————————————————————————————————————————\n\n');
+	logger.logKeyValuePair({
+		key: 'Classifications',
+		value: Object.keys(classificationJSON).length,
+	});
 
-	return data;
+	logger.logEnd();
+
+	return writeFile(classificationJSONPath, classificationJSON)
+		.then(() => data);
 }
 
 const extractAndSaveStakeholders = (data) => {
-	console.log('EXTRACTING AND SAVING RAW STAKEHOLDERS:');
-	console.log('————————————————————————————————————————————————————');
+	logger.logTitle('Extracting and saving raw stakeholders');
+
 	const clusteredDocumentStakeholders = getClusteredDocumentStakeholders(data);
 	const clusteredDocumentStakeholdersPath = getPathByConstantName('RAW_CLUSTERED_STAKEHOLDERS');
-	console.log(`Raw Stakeholders: ${Object.keys(clusteredDocumentStakeholders).length}`);
-	writeFile(clusteredDocumentStakeholdersPath, clusteredDocumentStakeholders);
-	console.log('————————————————————————————————————————————————————\n\n');
 
-	return data;
+	logger.logKeyValuePair({
+		key: 'Raw Stakeholders',
+		value: Object.keys(clusteredDocumentStakeholders).length,
+	});
+
+	return writeFile(clusteredDocumentStakeholdersPath, clusteredDocumentStakeholders)
+		.then(() => data);
 };
 
 const saveDocumentsAndEvents = (data) => {
 	const { documents, events } = data;
-	console.log('SAVING DOCUMENTS AND EVENTS DATA:');
-	console.log('————————————————————————————————————————————————————');
-	console.log(`Documents: ${documents.length}`);
-	console.log(`Events: ${events.length}`);
+
+	logger.logTitle('Saving documents and events data');
+	logger.logKeyValuePair({ key: 'Documents', value: documents.length });
+	logger.logKeyValuePair({ key: 'Events', value: events.length });
 
 	// Save documents as JSON
 	const documentsDataPath = getPathByConstantName('DOCUMENTS_DATA_PATH');
-	writeFile(documentsDataPath, documents);
 	// Save events as JSON
 	const eventsDataPath = getPathByConstantName('EVENTS_DATA_PATH');
-	writeFile(eventsDataPath, events);
-	console.log('————————————————————————————————————————————————————\n\n');
 
-	return data;
+	return Promise.all([
+		writeFile(eventsDataPath, events),
+		writeFile(documentsDataPath, documents),
+	]).then(() => data);
 };
 
 const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, reject) => {
+	logger.logTitle('Extracting entities from Events and Documents');
+
 	const data = [...documents, ...events];
 	return collectEntitiesFromDataItem(data[0], data)
 		.then(() => resolve({ documents, events }))
 		.catch(reject);
 });
 
-const logSuccessMessage = () => {
-	const endDate = new Date() - startDate;
-
-	console.log('FINISHED EXECUTING SCRIPT:');
-	console.log('————————————————————————————————————————————————————');
-	console.info('Execution time: %dms', endDate);
-	console.log('————————————————————————————————————————————————————\n\n');
-};
-
 convertExcelToJSON(['documents', 'events'])
-	.then(logDataStats)
+	.then(logger.logDataStats)
 	.then(parseDates)
 	.then(extractAndSaveKinds)
 	.then(extractAndSaveClassifications)
 	.then(extractAndSaveStakeholders)
-	// .then(extractAndSaveEntities)
-	// .then(extractAndSaveOriginals) // Save files and check if already existing
+	.then(extractAndSaveEntities)
+	.then(extractAndSaveOriginals) // Save files and check if already existing
 	.then(extractAndAddTranscripts)
 	.then(saveDocumentsAndEvents)
-	.then(logSuccessMessage)
+	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
