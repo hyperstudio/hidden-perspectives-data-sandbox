@@ -8,6 +8,8 @@ const { getPathByConstantName } = require('../utils/pathUtil');
 
 // Scripts
 const createGraphcoolClassification = require('./createGraphcoolClassification');
+const createGraphcoolDocuments = require('./createGraphcoolDocuments');
+const createGraphcoolStackeholders = require('./createGraphcoolStackeholders');
 
 
 function getNumberOfDataItems(data) {
@@ -135,39 +137,6 @@ function createGraphcoolBriefingBook() {
 	};
 }
 
-function createGraphcoolDocument() {
-	const documentFields = {
-		id: 'uirXXX',
-		briefingBooksMentionedIn: [],
-		createdAt: new Date(),
-		dnsaAbstract: null,
-		dnsaCitation: null,
-		dnsaCollection: null,
-		dnsaFrom: null,
-		dnsaItemNumber: null,
-		dnsaOrigin: null,
-		dnsaStakeholder: null,
-		dnsaSubject: null,
-		dnsaTo: null,
-		dnsaUrl: null,
-		documentAuthors: [],
-		documentClassification: [],
-		documentCreationDate: 'date time',
-		documentDescription: '',
-		documentDuplicates: [],
-		documentFiles: [],
-		documentKind: [],
-		documentMediaType: 'RawText',
-		documentOriginalID: '',
-		documentPublicationDate: 'date time',
-		documentTitle: '',
-		mentionedEvents: [],
-		mentionedLocations: [],
-		mentionedStakeholders: [],
-		sessionNumber: 1,
-	};
-}
-
 function createGraphcoolEvent() {
 	const eventFields = {
 		id: 'generated id with chronos',
@@ -207,19 +176,19 @@ function createGraphcoolLocation() {
 	};
 }
 
-function createGraphcoolStackeholder() {
-	const stakeholderFields = {
-		id: 'generated id with chronos',
-		briefingBooksMentionedIn: [], // BB relations
-		createdAt: new Date(),
-		documents: [], // Documents authored
-		documentsMentionedIn: [], // Document relations
-		eventsInvolvedIn: [], // Event relations
-		isStakeholderInstitution: false,
-		stakeholderFullName: 'Hans Müller',
-		locationWikipediaUri: 'http://',
-	};
-}
+// function createGraphcoolStackeholders() {
+// 	const stakeholderFields = {
+// 		id: 'generated id with chronos',
+// 		briefingBooksMentionedIn: [], // BB relations
+// 		createdAt: new Date(),
+// 		documents: [], // Documents authored
+// 		documentsMentionedIn: [], // Document relations
+// 		eventsInvolvedIn: [], // Event relations
+// 		isStakeholderInstitution: false,
+// 		stakeholderFullName: 'Hans Müller',
+// 		locationWikipediaUri: 'http://',
+// 	};
+// }
 
 function createGraphcoolFile() {
 
@@ -248,12 +217,12 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
 	.then(createGraphcoolClassification)
-	// .then(createGraphcoolDocument)
 	// .then(createGraphcoolEvent)
 	// .then(createGraphcoolKind)
 	// .then(createGraphcoolLocation)
-	// .then(createGraphcoolStackeholder)
-	// .then(createGraphcoolFile) // System?
+	// .then(createGraphcoolStackeholders)
+	.then(createGraphcoolDocuments)
+	// .then(createGraphcoolFileRelation) // System?
 	// // Create Graphcool RELATIONS
 	// .then(createGraphcoolRelations)
 	.then(logger.logSuccessMessage)
