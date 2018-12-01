@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const cliProgress = require('cli-progress');
 
@@ -5,11 +6,13 @@ const cliProgress = require('cli-progress');
 const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
+const graphcoolDataImport = require('../utils/graphcoolDataImport');
 
 // Scripts
-const createGraphcoolClassification = require('./createGraphcoolClassification');
+const createGraphcoolClassifications = require('./createGraphcoolClassifications');
 const createGraphcoolDocuments = require('./createGraphcoolDocuments');
 const createGraphcoolStackeholders = require('./createGraphcoolStackeholders');
+const createGraphcoolKinds = require('./createGraphcoolKinds');
 
 
 function getNumberOfDataItems(data) {
@@ -153,14 +156,6 @@ function createGraphcoolEvent() {
 	};
 }
 
-function createGraphcoolKind() {
-	const kindFields = {
-		id: 'generated id with chronos',
-		documentsWithClassification: [], // Document relations
-		name: 'kind name',
-	};
-}
-
 function createGraphcoolLocation() {
 	const locationFields = {
 		id: 'generated id with chronos',
@@ -202,6 +197,7 @@ function createGraphcoolRelations() {
 	// createLocationsRelations();
 }
 
+
 const relevantDataPaths = {
 	documents: getPathByConstantName('DOCUMENTS_DATA_PATH'),
 	events: getPathByConstantName('EVENTS_DATA_PATH'),
@@ -216,14 +212,12 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// .then(createTagsFromEntities)
 	// Create Graphcool NODES
 	// .then(createGraphcoolBriefingBook)
-	// .then(createGraphcoolClassification)
+	.then(createGraphcoolClassifications)
 	// .then(createGraphcoolEvent)
-	// .then(createGraphcoolKind)
+	.then(createGraphcoolKinds)
 	// .then(createGraphcoolLocation)
-	.then(createGraphcoolStackeholders)
-	// .then(createGraphcoolDocuments)
-	// .then(createGraphcoolFileRelation) // System?
-	// // Create Graphcool RELATIONS
-	// .then(createGraphcoolRelations)
+	// .then(createGraphcoolStackeholders)
+	.then(createGraphcoolDocuments)
+	// .then(graphcoolDataImport)
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
