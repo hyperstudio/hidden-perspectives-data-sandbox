@@ -85,8 +85,10 @@ const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, 
 
 	const data = [...documents, ...events];
 	return collectEntitiesFromDataItem(data[0], data)
-		.then(() => resolve({ documents, events }))
-		.catch(reject);
+		.catch((err) => {
+			if (Array.isArray(err)) resolve({ documents, events });
+			reject(err);
+		});
 });
 
 convertExcelToJSON(['documents', 'events'])
