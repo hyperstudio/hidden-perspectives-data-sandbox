@@ -14,6 +14,7 @@ const createGraphcoolDocuments = require('./createGraphcoolDocuments');
 const createGraphcoolStakeholders = require('./createGraphcoolStakeholders');
 const createGraphcoolKinds = require('./createGraphcoolKinds');
 const createGraphcoolEvents = require('./createGraphcoolEvents');
+const createGraphcoolBriefingBooks = require('./createGraphcoolBriefingBooks');
 
 
 function getNumberOfDataItems(data) {
@@ -129,17 +130,6 @@ function createTagsFromEntities() {
 
 }
 
-function createGraphcoolBriefingBook() {
-	const bbFields = {
-		id: 'uirXXX',
-		briefingBookDescription: 'A description',
-		briefingBookTitle: 'Title',
-		createdAt: new Date(),
-		mentionedDocuments: [], // Document relations
-		mentionedEvents: [], // Event relations
-		mentionedStakeholders: [], // Stakeholder relations
-	};
-}
 
 function createGraphcoolLocation() {
 	const locationFields = {
@@ -194,15 +184,21 @@ const relevantDataPaths = {
 getRelevantDataFromFiles(relevantDataPaths)
 	.then(clusterEntities)
 	.then(splitEntityTypes)
-	// .then(createTagsFromEntities)
 	// Create Graphcool NODES
-	// .then(createGraphcoolBriefingBook)
-	// .then(createGraphcoolClassifications)
-	// .then(createGraphcoolKinds)
-	// .then(createGraphcoolLocation)
-	// .then(createGraphcoolStakeholders)
+	.then(createGraphcoolClassifications)
+	.then(createGraphcoolKinds)
+	// Create main NODES
 	.then(createGraphcoolEvents)
-	// .then(createGraphcoolDocuments)
+	.then(createGraphcoolDocuments)
+	// Create entity-related NODES
+	.then(createGraphcoolBriefingBooks)
+	// .then(createGraphcoolLocation)
+	// .then(createGraphcoolTagsFromEntities)
+	// .then(createGraphcoolStakeholders)
+	// Create entity-related RELATIONS
+	// .then(createEntityRelatedRealtions)
+	// Import data into Graphcool
 	// .then(graphcoolDataImport)
+	// The End
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
