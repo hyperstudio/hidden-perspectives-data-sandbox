@@ -9,6 +9,7 @@ const FILE_PATHS = {
 	DOCUMENTS_DATA_PATH: './data/json/documents/documentsWithEntitiesAndTextFiles.json',
 	EVENTS_DATA_PATH: './data/json/events/eventsWithEntitiesAndTextFiles.json',
 	FILE_OBJECTS_DATA_PATH: './data/json/files/fileObjects.json',
+	LOCATIONS_DATA_PATH: './data/json/locations/locations.json',
 	GRAPHCOOL_NODES_PATH: './graphcoolData/nodes/',
 	GRAPHCOOL_RELATIONS_PATH: './graphcoolData/relations/',
 };

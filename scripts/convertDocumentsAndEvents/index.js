@@ -6,6 +6,7 @@ const writeFile = require('../utils/writeFile');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
 const logger = require('../utils/logger');
+const readFile = require('../utils/readFile');
 
 // Data handling scripts
 const collectEntitiesFromDataItem = require('./collectEntitiesFromDataItem');
@@ -14,6 +15,7 @@ const createDocumentTagsJSON = require('./createDocumentTagsJSON');
 const getClusteredDocumentStakeholders = require('./getClusteredDocumentStakeholders');
 const extractAndAddTranscripts = require('./extractAndAddTranscripts');
 const extractAndSaveOriginals = require('./extractAndSaveOriginals');
+const extractAndSaveLocations = require('./extractAndSaveLocations');
 
 function extractAndSaveKinds(data) {
 	logger.logTitle('Extracting and saving raw kinds');
@@ -86,10 +88,18 @@ const extractAndSaveEntities = ({ documents, events }) => new Promise((resolve, 
 	const data = [...documents, ...events];
 	return collectEntitiesFromDataItem(data[0], data)
 		.catch((err) => {
-			if (Array.isArray(err)) resolve({ documents, events });
+			if (Array.isArray(err)) resolve({ documents, events, entities: err });
 			reject(err);
 		});
 });
+
+const readAndAddEntites = (data) => {
+	const entitiesPath = getPathByConstantName('RAW_ENTITIES');
+	return readFile(entitiesPath)
+		.then(JSON.parse)
+		.then((entities) => ({ ...data, entities }))
+		.catch(abortWithError);
+};
 
 convertExcelToJSON(['documents', 'events'])
 	.then(logger.logDataStats)
@@ -97,9 +107,11 @@ convertExcelToJSON(['documents', 'events'])
 	.then(extractAndSaveKinds)
 	.then(extractAndSaveClassifications)
 	.then(extractAndSaveStakeholders)
-	.then(extractAndSaveEntities)
-	.then(extractAndSaveOriginals) // Save files and check if already existing
+	.then(readAndAddEntites)
+	// .then(extractAndSaveEntities)
+	// .then(extractAndSaveOriginals) // Save files and check if already existing
 	.then(extractAndAddTranscripts)
 	.then(saveDocumentsAndEvents)
+	.then(extractAndSaveLocations)
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
