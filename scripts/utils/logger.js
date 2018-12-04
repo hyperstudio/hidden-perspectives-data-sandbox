@@ -1,5 +1,5 @@
-const SOLID_LINE = 	'————————————————————————————————————————————————————————';
-const DOTTED_LINE = '・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・';
+const SOLID_LINE = 	'————————————————————————————————————————————————————————————————————————————————';
+const DOTTED_LINE = '................................................................................';
 
 const startDate = new Date();
 
@@ -9,8 +9,9 @@ ${title.toUpperCase()}
 ${SOLID_LINE}
 `);
 
-const logKeyValuePair = ({ key, value, origin }) => console.log(`${DOTTED_LINE}
-${key.toUpperCase()}: ${value} ${origin ? `from ${origin}` : ''}`);
+const logKeyValuePair = ({ key, value, origin }) => console.log(`
+${key.toUpperCase()}: ${value} ${origin ? `from ${origin}` : ''}
+${DOTTED_LINE}`);
 
 const logEnd = () => console.log(`
 ${SOLID_LINE}
