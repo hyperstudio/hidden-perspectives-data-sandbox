@@ -1,19 +1,19 @@
-const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 
 const createGraphcoolEvent = ({
-	startDate,
-	endDate,
-	title,
-	description,
+	startDate: eventStartDate,
+	endDate: eventEndDate,
+	title: eventTitle,
+	description: eventDescription,
+	fileName: id,
 }) => ({
 	_typeName: 'Event',
-	id: getRandomID(),
 	createdAt: new Date(),
-	eventDescription: description,
-	eventEndDate: endDate,
-	eventStartDate: startDate,
-	eventTitle: title,
+	id,
+	eventDescription,
+	eventEndDate,
+	eventStartDate,
+	eventTitle,
 });
 
 const createGraphcoolEvents = (data) => saveGraphcoolData({

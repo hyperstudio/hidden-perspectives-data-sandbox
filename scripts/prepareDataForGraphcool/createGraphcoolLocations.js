@@ -2,14 +2,14 @@ const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 
 const createGraphcoolLocationRelation = ({ fileName }, nodeId) => {
-	const isDocument = fileName.startsWith('uri');
+	const isDocument = fileName.startsWith('uir');
 	const relationLocations = {
 		_typeName: 'Location',
 		id: nodeId,
 		fieldName: isDocument ? 'documentsMentionedIn' : 'locationEvents',
 	};
 	const relationDocumentOrEvent = {
-		_typeName: 'Document',
+		_typeName: isDocument ? 'Document' : 'Event',
 		id: fileName,
 		fieldName: isDocument ? 'mentionedLocations' : 'eventLocations',
 	};

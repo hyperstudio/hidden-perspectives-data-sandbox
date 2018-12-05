@@ -16,6 +16,7 @@ const createGraphcoolKinds = require('./createGraphcoolKinds');
 const createGraphcoolEvents = require('./createGraphcoolEvents');
 const createGraphcoolBriefingBooks = require('./createGraphcoolBriefingBooks');
 const createGraphcoolLocations = require('./createGraphcoolLocations');
+const createGraphcoolTags = require('./createGraphcoolTags');
 
 
 function getNumberOfDataItems(data) {
@@ -78,6 +79,7 @@ function getRelevantDataFromFiles(dataPaths) {
 function clusterEntities(data) {
 	const { rawEntities } = data;
 	const clusteredEntities = {};
+
 	const addEntity = (entity, fileName, originalString) => {
 		const { title } = entity;
 		const hasEntity = Object.prototype.hasOwnProperty.call(clusteredEntities, title);
@@ -107,55 +109,19 @@ function clusterEntities(data) {
 	return { ...data, entities: Object.values(clusteredEntities) };
 }
 
-function splitEntityTypes(data) {
-	const { rawEntities } = data;
-
-	Object.keys(rawEntities).forEach((entityKey) => {
-		const entity = rawEntities[entityKey];
-
+const splitEntityTypes = (data) => ({
+	...data,
+	entities: Object.keys(data.entities).map((entityKey) => {
+		const entity = data.entities[entityKey];
 		const { types } = entity;
 		if (types && types.length > 0) {
 			const relevantEntityType = getRelevantEntityType(types);
 			entity.relevantType = relevantEntityType;
-
-			// console.log(rawEntities[entityKey].fileNames.length);
-			// console.log(entityKey);
-			// console.log(types);
 		}
-	});
 
-	return data;
-}
-
-function createTagsFromEntities() {
-
-}
-
-// function createGraphcoolStackeholders() {
-// 	const stakeholderFields = {
-// 		id: 'generated id with chronos',
-// 		briefingBooksMentionedIn: [], // BB relations
-// 		createdAt: new Date(),
-// 		documents: [], // Documents authored
-// 		documentsMentionedIn: [], // Document relations
-// 		eventsInvolvedIn: [], // Event relations
-// 		isStakeholderInstitution: false,
-// 		stakeholderFullName: 'Hans Müller',
-// 		locationWikipediaUri: 'http://',
-// 	};
-// }
-
-function createGraphcoolFile() {
-
-}
-
-function createGraphcoolRelations() {
-	// createStakeholdersRelations();
-	// createTagsRelations();
-	// createKindsRelations();
-	// createClassificationsRelations();
-	// createLocationsRelations();
-}
+		return entity;
+	}),
+});
 
 
 const relevantDataPaths = {
@@ -179,7 +145,7 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// Create entity-related NODES
 	.then(createGraphcoolBriefingBooks)
 	.then(createGraphcoolLocations)
-	// .then(createGraphcoolTagsFromEntities)
+	.then(createGraphcoolTags)
 	// .then(createGraphcoolStakeholders)
 	// Create entity-related RELATIONS
 	// .then(createEntityRelatedRealtions)
