@@ -15,6 +15,7 @@ const createGraphcoolStakeholders = require('./createGraphcoolStakeholders');
 const createGraphcoolKinds = require('./createGraphcoolKinds');
 const createGraphcoolEvents = require('./createGraphcoolEvents');
 const createGraphcoolBriefingBooks = require('./createGraphcoolBriefingBooks');
+const createGraphcoolLocations = require('./createGraphcoolLocations');
 
 
 function getNumberOfDataItems(data) {
@@ -130,22 +131,6 @@ function createTagsFromEntities() {
 
 }
 
-
-function createGraphcoolLocation() {
-	const locationFields = {
-		id: 'generated id with chronos',
-		createdAt: new Date(),
-		documentsMentionedIn: [], // Document relations
-		locationDescription: 'This is a very nice location',
-		locationEvents: [], // Event relations
-		locationLatitude: 123 || null,
-		locationLongitude: 321 || null,
-		locationName: 'Best location',
-		locationPlace: '?',
-		locationWikipediaUri: 'http://',
-	};
-}
-
 // function createGraphcoolStackeholders() {
 // 	const stakeholderFields = {
 // 		id: 'generated id with chronos',
@@ -179,6 +164,7 @@ const relevantDataPaths = {
 	kinds: getPathByConstantName('RAW_KINDS'),
 	classifications: getPathByConstantName('RAW_CLASSIFICATIONS'),
 	rawEntities: getPathByConstantName('RAW_ENTITIES'),
+	locations: getPathByConstantName('LOCATIONS_DATA_PATH'),
 };
 
 getRelevantDataFromFiles(relevantDataPaths)
@@ -192,7 +178,7 @@ getRelevantDataFromFiles(relevantDataPaths)
 	.then(createGraphcoolDocuments)
 	// Create entity-related NODES
 	.then(createGraphcoolBriefingBooks)
-	// .then(createGraphcoolLocation)
+	.then(createGraphcoolLocations)
 	// .then(createGraphcoolTagsFromEntities)
 	// .then(createGraphcoolStakeholders)
 	// Create entity-related RELATIONS
