@@ -50,6 +50,7 @@ function getStringToBeAnalyzed(data) {
 
 	if (isDocument) {
 		const {
+			author,
 			summary,
 			source,
 			recipient,
@@ -57,6 +58,7 @@ function getStringToBeAnalyzed(data) {
 		} = data;
 
 		stringToBeAnalyzed = [
+			author,
 			summary,
 			source,
 			recipient,
@@ -184,7 +186,9 @@ function getAndSaveEntitiesForDataItem(dataItem, allDataItems) {
 	return new Promise((resolve, reject) => collectEntitiesFromDataItem(dataItem, allDataItems)
 		.then((data) => {
 			progressBarProgess += 1;
-			progressBar.update(progressBarProgess);
+			progressBar.update(progressBarProgess, {
+				id: dataItem.fileName,
+			});
 			return data;
 		})
 		.then(collectEntitiesForNextDataItem)

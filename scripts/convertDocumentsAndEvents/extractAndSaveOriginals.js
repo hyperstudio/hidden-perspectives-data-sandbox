@@ -7,7 +7,9 @@ const getPathsInDir = require('../utils/getPathsInDir');
 const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 
-const progressBar = new cliProgress.Bar({}, cliProgress.Presets.shades_classic);
+const progressBar = new cliProgress.Bar({
+	format: 'progress [{bar}] {percentage}% | {value}/{total} | Currently: {id}',
+}, cliProgress.Presets.shades_classic);
 
 const getFileConnector = (files) => (document) => {
 	const file = files.find(({ name }) => `${document.fileName}.pdf` === name);
@@ -58,7 +60,9 @@ const getUploadSequenceReducer = (originalsParentPath, files) => (
 				.then(saveFile);
 		})
 		.then((fileObject) => {
-			progressBar.update(idx + 1);
+			progressBar.update(idx + 1, {
+				id: fileObject.name,
+			});
 			files.push(fileObject);
 			return fileObject;
 		}),

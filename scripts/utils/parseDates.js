@@ -20,7 +20,9 @@ function parsedDates({ documents, events }) {
 			? publicationDate
 			: chrono.parseDate(publicationDate);
 
-		progressBar.update(currentlyProcessed += 1);
+		progressBar.update(currentlyProcessed += 1, {
+			id: document.fileName,
+		});
 		return {
 			...document,
 			date: parsedDate,
@@ -38,7 +40,9 @@ function parsedDates({ documents, events }) {
 			? endDate
 			: chrono.parseDate(endDate);
 
-		progressBar.update(currentlyProcessed += 1);
+		progressBar.update(currentlyProcessed += 1, {
+			id: event.fileName,
+		});
 		return {
 			...event,
 			startDate: parsedStartDate,

@@ -146,7 +146,7 @@ getRelevantDataFromFiles(relevantDataPaths)
 	.then(createGraphcoolBriefingBooks)
 	.then(createGraphcoolLocations)
 	.then(createGraphcoolTags)
-	// .then(createGraphcoolStakeholders)
+	.then(createGraphcoolStakeholders)
 	// Create entity-related RELATIONS
 	// .then(createEntityRelatedRealtions)
 	// Import data into Graphcool

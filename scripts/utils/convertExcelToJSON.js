@@ -115,7 +115,9 @@ function convertExcelToJSON(workbookTypes) {
 			.map(({ type, paths }) => new Promise((resolveTypeConversion) => {
 				const worksheetPromises = paths.map(
 					(workbookPath) => {
-						progressBar.update(progressbarSteps += 1);
+						progressBar.update(progressbarSteps += 1, {
+							id: workbookPath,
+						});
 						return readSheet(workbookPath, type);
 					},
 				);

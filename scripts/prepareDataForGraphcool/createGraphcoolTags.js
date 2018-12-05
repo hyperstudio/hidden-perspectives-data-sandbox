@@ -8,15 +8,7 @@ const entityIsLocation = ({ types }) => Boolean(
 
 const entityIsStakeholder = ({ relevantType }) => !!relevantType;
 
-const entityIsTag = (entity) => {
-	const isTag = !entityIsLocation(entity) && !entityIsStakeholder(entity);
-	// console.log('ID:', entity.id);
-	// console.log('Is location', entityIsLocation(entity));
-	// console.log('Is Stakeholder', entityIsStakeholder(entity));
-	// console.log('Is Tag', isTag);
-	// console.log('————————————————');
-	return isTag;
-};
+const entityIsTag = (entity) => !entityIsLocation(entity) && !entityIsStakeholder(entity);
 
 const last = (array) => array[array.length - 1];
 

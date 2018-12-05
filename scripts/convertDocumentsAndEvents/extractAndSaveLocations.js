@@ -102,7 +102,9 @@ const getLocationsAugmentationReducer = (augmentedLocations) => (
 				.then(saveLocation);
 		})
 		.then((augmentedLocation) => {
-			progressBar.update(idx + 1);
+			progressBar.update(idx + 1, {
+				id: augmentedLocation.fileName,
+			});
 			augmentedLocations.push(augmentedLocation);
 			return augmentedLocation;
 		}),
