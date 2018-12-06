@@ -30,17 +30,16 @@ const getRelationFieldName = (fileName, entity, data) => {
 	const { start } = entity;
 	if (isDocument(fileName)) {
 		const document = data.documents.find((doc) => doc.fileName === fileName);
-		const { author = '' } = document || {};
 
-		if (!document) {
-			console.log(fileName);
+		if (document && document.author) {
+			const { author } = document;
+
+			const isAuthor = inRange(start, 0, author.length);
+			const isMentionedIn = inRange(start, author.length, entity.orinalString);
+
+			if (isAuthor) return { stakeholder: 'documents', node: 'documentAuthors' };
+			if (isMentionedIn) return { stakeholder: 'documentsMentionedIn', node: 'mentionedStakholders' };
 		}
-
-		const isAuthor = inRange(start, 0, author.length);
-		const isMentionedIn = inRange(start, author.length, entity.orinalString);
-
-		if (isAuthor) return { stakeholder: 'documents', node: 'documentAuthors' };
-		if (isMentionedIn) return { stakeholder: 'documentsMentionedIn', node: 'mentionedStakholders' };
 	}
 	return { stakeholder: 'eventsInvolvedIn', node: 'eventStakeholders' };
 };
