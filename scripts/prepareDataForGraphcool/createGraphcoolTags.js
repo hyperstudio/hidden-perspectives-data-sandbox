@@ -27,7 +27,7 @@ const createGraphcoolTagNode = ({
 	_typeName: 'Tag',
 	id: getRandomID(),
 	description,
-	name,
+	name: name || 'Unknown',
 	tagWikipediaUri,
 	type: formatTagType(types),
 });
