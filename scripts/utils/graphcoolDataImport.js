@@ -53,12 +53,12 @@ const importGraphcoolData = () => {
 				.map((path) => `${nodesPath}/${path}`)
 				.map(readFileAndImportToGraphcool('nodes')),
 		))
-		// .then(() => getPathsInDir(relationsPath))
-		// .then((relationPaths) => Promise.all(
-		// 	relationPaths
-		// 		.map((path) => `${relationsPath}/${path}`)
-		// 		.map(readFileAndImportToGraphcool('relations')),
-		// ))
+		.then(() => getPathsInDir(relationsPath))
+		.then((relationPaths) => Promise.all(
+			relationPaths
+				.map((path) => `${relationsPath}/${path}`)
+				.map(readFileAndImportToGraphcool('relations')),
+		))
 		.catch((err) => {
 			throw new Error(err);
 		});

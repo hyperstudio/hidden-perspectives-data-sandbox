@@ -1,6 +1,7 @@
 const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 const omitNullValues = require('../utils/omitNullValues');
+const filterArrayForObjectsWithUniqueKey = require('../utils/filterArrayForObjectsWithUniqueKey');
 
 const createGraphcoolLocationRelation = ({ fileName }, nodeId) => {
 	const isDocument = fileName.startsWith('uir');
@@ -36,7 +37,7 @@ const createGraphcoolLocationNode = ({
 });
 
 const createGraphcoolLocations = (data) => {
-	const { nodes, relations } = data.locations
+	const { nodes, relations } = filterArrayForObjectsWithUniqueKey(data.locations, 'locationName')
 		.reduce((acc, location) => {
 			const node = createGraphcoolLocationNode(location);
 			const relation = createGraphcoolLocationRelation(location, node.id);
