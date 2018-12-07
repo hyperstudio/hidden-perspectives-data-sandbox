@@ -1,6 +1,9 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 const omitNullValues = require('../utils/omitNullValues');
 
+const createTitleFallback = (title, description) => title
+	|| (description ? `Untitled — ${description.substring(0, 50)}…` : 'Untitled');
+
 const createGraphcoolEvent = ({
 	startDate: eventStartDate,
 	endDate: eventEndDate,
@@ -14,7 +17,7 @@ const createGraphcoolEvent = ({
 	eventDescription,
 	eventEndDate,
 	eventStartDate,
-	eventTitle,
+	eventTitle: createTitleFallback(eventTitle, eventDescription),
 });
 
 const createGraphcoolEvents = (data) => saveGraphcoolData({
