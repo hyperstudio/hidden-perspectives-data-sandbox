@@ -11,7 +11,8 @@ function importGraphcoolData({ valueType, values }) {
 			'Content-Type': 'application/json',
 			Authorization: process.env.GRAPHCOOL_AUTHORIZATION_TOKEN,
 		};
-		const url = 'https://api.graph.cool/simple/v1/hiddenperspectives/import';
+		const projectID = process.env.GRAPHCOOL_PROJECT_ID;
+		const url = `https://api.graph.cool/simple/v1/${projectID}/import`;
 
 		const options = {
 			method: 'POST',
