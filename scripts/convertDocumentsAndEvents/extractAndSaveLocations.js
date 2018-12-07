@@ -46,13 +46,20 @@ const extractLocations = (entities) => {
 	return Promise.resolve(locations);
 };
 
-const reduceLocationToUniqueKeyValuePairObject = (locationsObj, location) => ({
+const reduceLocationToUniqueKeyValuePairObjectByUri = (locationsObj, location) => ({
 	...locationsObj,
 	[location.uri]: location,
 });
 
+const reduceLocationToUniqueKeyValuePairObjectByTitle = (locationsObj, location) => ({
+	...locationsObj,
+	[location.title]: location,
+});
+
 const makeLocationsUnique = (locations) => Object.values(
-	locations.reduce(reduceLocationToUniqueKeyValuePairObject, {}),
+	Object.values(
+		locations.reduce(reduceLocationToUniqueKeyValuePairObjectByUri, {}),
+	).reduce(reduceLocationToUniqueKeyValuePairObjectByTitle, {}),
 );
 
 const composeUrl = (searchString) => [

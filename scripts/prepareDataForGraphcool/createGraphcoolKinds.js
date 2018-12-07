@@ -36,7 +36,7 @@ function createKindRelation({ id }, documentID) {
 	const relationKinds = {
 		_typeName: 'Kind',
 		id,
-		fieldName: 'documentsWithKinds',
+		fieldName: 'documentsWithKind',
 	};
 	const relationDocument = {
 		_typeName: 'Document',

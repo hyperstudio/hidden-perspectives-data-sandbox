@@ -7,6 +7,7 @@ const readFile = require('../utils/readFile');
 function importDataToGraphcool(graphcoolData) {
 	return new Promise((resolve, reject) => {
 		console.log(graphcoolData.valueType);
+
 		const headers = {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${process.env.GRAPHCOOL_AUTHORIZATION_TOKEN}`,
@@ -20,7 +21,6 @@ function importDataToGraphcool(graphcoolData) {
 			body: JSON.stringify(graphcoolData),
 		};
 
-		console.log(graphcoolData);
 		pMinDelay(fetch(url, options), 1000)
 			.then((response) => response.json())
 			.then((response) => {
@@ -36,6 +36,9 @@ const readFileAndImportToGraphcool = (valueType) => (path) => readFile(path)
 	.then(JSON.parse)
 	.then((values) => ({ valueType, values }))
 	.then(importDataToGraphcool)
+	.then(() => {
+		console.log('PATH IMPORTED TO GRAPHCOOL:', path);
+	})
 	.catch((err) => {
 		throw new Error(err);
 	});
@@ -50,12 +53,12 @@ const importGraphcoolData = () => {
 				.map((path) => `${nodesPath}/${path}`)
 				.map(readFileAndImportToGraphcool('nodes')),
 		))
-		.then(() => getPathsInDir(relationsPath))
-		.then((relationPaths) => Promise.all(
-			relationPaths
-				.map((path) => `${relationsPath}/${path}`)
-				.map(readFileAndImportToGraphcool('relations')),
-		))
+		// .then(() => getPathsInDir(relationsPath))
+		// .then((relationPaths) => Promise.all(
+		// 	relationPaths
+		// 		.map((path) => `${relationsPath}/${path}`)
+		// 		.map(readFileAndImportToGraphcool('relations')),
+		// ))
 		.catch((err) => {
 			throw new Error(err);
 		});

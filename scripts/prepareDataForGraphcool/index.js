@@ -125,26 +125,40 @@ const relevantDataPaths = {
 };
 
 getRelevantDataFromFiles(relevantDataPaths)
-	// .then(clusterEntities)
-	// .then(splitEntityTypes)
-	// // Create Graphcool NODES
-	// .then(createGraphcoolClassifications)
-	// .then(createGraphcoolKinds)
-	// // Create main NODES
-	// .then(createGraphcoolEvents)
-	// .then(createGraphcoolDocuments)
-	// // Create entity-related NODES
-	// .then(createGraphcoolBriefingBooks)
-	// .then(createGraphcoolLocations)
-	// .then(createGraphcoolTags)
-	// .then(createGraphcoolStakeholders)
+	.then(clusterEntities)
+	.then(splitEntityTypes)
+	// Create Graphcool NODES
+	.then(createGraphcoolClassifications)
+	.then(createGraphcoolKinds)
+	// Create main NODES
+	.then(createGraphcoolEvents)
+	.then(createGraphcoolDocuments)
+	// Create entity-related NODES
+	.then(createGraphcoolBriefingBooks)
+	.then(createGraphcoolLocations)
+	.then(createGraphcoolTags)
+	.then(createGraphcoolStakeholders)
 	// Import data into Graphcool
 	.then(graphcoolDataImport)
 	// The End
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
 
-// Briefing Book Relations
-// Relation Document to File
-// (Optional) connect documents and events with related event entities
-// (Optional) connect briefing books to events and documents
+// WE HAVE THE FOLLOWING NODES:
+// - Documents
+// - Classifications
+// - Kinds
+// - BriefingBooks
+// - Events
+// - Stakeholders
+// - Tags
+// - Locations
+
+// MISSING RELATIONS:
+// - Documents
+
+// RELATION ERRORs:
+// - Documents
+// - Events
+// - Kind
+// - BB

@@ -1,37 +1,17 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
+const omitNullValues = require('../utils/omitNullValues');
 
 const createDocumentNode = ({
 	fileName,
-	sessionNumber,
 	title,
 	date,
 	summary,
 	publicationDate,
-	dnsaCitation,
-	dnsaCollection,
-	dnsaItemNumber,
-	dnsaOrigin,
-	dnsaFrom,
-	dnsaTo,
-	dnsaIndividual,
-	dnsaSubject,
-	dnsaAbstract,
-	dnsaUrl,
 	textFileContent,
-}) => ({
+}) => omitNullValues({
 	_typeName: 'Document',
 	id: fileName,
 	createdAt: new Date(),
-	dnsaAbstract,
-	dnsaCitation,
-	dnsaCollection,
-	dnsaFrom,
-	dnsaItemNumber,
-	dnsaOrigin,
-	dnsaStakeholder: dnsaIndividual,
-	dnsaSubject,
-	dnsaTo,
-	dnsaUrl,
 	documentCreationDate: date,
 	documentDescription: summary,
 	documentMediaType: 'RawText',
@@ -39,7 +19,6 @@ const createDocumentNode = ({
 	documentPublicationDate: publicationDate,
 	documentTitle: title,
 	documentTranscript: textFileContent,
-	sessionNumber,
 });
 
 const createDocumentFileRelation = ({

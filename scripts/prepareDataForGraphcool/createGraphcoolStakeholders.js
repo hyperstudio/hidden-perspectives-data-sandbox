@@ -1,5 +1,6 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 const getRandomID = require('../utils/getRandomID');
+const omitNullValues = require('../utils/omitNullValues');
 
 const isPerson = (type) => type === 'person';
 const isInstitution = (type) => type === 'organisation';
@@ -13,13 +14,13 @@ const createGraphcoolStakeholderNode = ({
 	uri,
 	abstract,
 	relevantType,
-}) => ({
+}) => omitNullValues({
 	_typeName: 'Stakeholder',
 	id: getRandomID(),
 	stakeholderFullName: title,
 	stakeholderDescription: abstract,
-	isInstitution: relevantType === 'organisation',
-	...(uri ? { uri } : {}),
+	isStakeholderInstitution: relevantType === 'organisation',
+	stakeholderWikipediaUri: uri || null,
 });
 
 const isDocument = (fileName) => fileName.startsWith('uir');

@@ -1,9 +1,10 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 const getRandomID = require('../utils/getRandomID');
+const omitNullValues = require('../utils/omitNullValues');
 
 const entityIsLocation = ({ types }) => Boolean(
 	types && types.length
-		&& types.includes('http://dbpedia.org/ontology/Location'),
+	&& types.includes('http://dbpedia.org/ontology/Location'),
 );
 
 const entityIsStakeholder = ({ relevantType }) => !!relevantType;
@@ -22,7 +23,7 @@ const createGraphcoolTagNode = ({
 	title: name,
 	uri: tagWikipediaUri,
 	types,
-}) => ({
+}) => omitNullValues({
 	_typeName: 'Tag',
 	id: getRandomID(),
 	description,

@@ -1,4 +1,5 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
+const omitNullValues = require('../utils/omitNullValues');
 
 const createGraphcoolEvent = ({
 	startDate: eventStartDate,
@@ -6,7 +7,7 @@ const createGraphcoolEvent = ({
 	title: eventTitle,
 	description: eventDescription,
 	fileName: id,
-}) => ({
+}) => omitNullValues({
 	_typeName: 'Event',
 	createdAt: new Date(),
 	id,

@@ -1,5 +1,6 @@
 const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
+const omitNullValues = require('../utils/omitNullValues');
 
 const createGraphcoolLocationRelation = ({ fileName }, nodeId) => {
 	const isDocument = fileName.startsWith('uir');
@@ -23,7 +24,8 @@ const createGraphcoolLocationNode = ({
 	lat: locationLatitude,
 	lon: locationLongitude,
 	abstract: locationDescription,
-}) => ({
+}) => omitNullValues({
+	_typeName: 'Location',
 	id: getRandomID(),
 	createdAt: new Date(),
 	locationDescription,
@@ -34,14 +36,15 @@ const createGraphcoolLocationNode = ({
 });
 
 const createGraphcoolLocations = (data) => {
-	const { nodes, relations } = data.locations.reduce((acc, location) => {
-		const node = createGraphcoolLocationNode(location);
-		const relation = createGraphcoolLocationRelation(location, node.id);
-		return {
-			nodes: acc.nodes.concat(node),
-			relations: [...acc.relations, relation],
-		};
-	}, { nodes: [], relations: [] });
+	const { nodes, relations } = data.locations
+		.reduce((acc, location) => {
+			const node = createGraphcoolLocationNode(location);
+			const relation = createGraphcoolLocationRelation(location, node.id);
+			return {
+				nodes: acc.nodes.concat(node),
+				relations: [...acc.relations, relation],
+			};
+		}, { nodes: [], relations: [] });
 
 	return Promise.all([
 		saveGraphcoolData({
