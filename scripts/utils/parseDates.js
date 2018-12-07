@@ -3,6 +3,11 @@ const cliProgress = require('cli-progress');
 const logger = require('../utils/logger');
 
 const isDateFormat = (testDate) => testDate instanceof Date;
+const parseDate = (date) => {
+	const dateString = `${date}`;
+	const dateForParsing = dateString.length === 4 ? `1/1/${dateString}` : dateString;
+	return chrono.parseDate(dateForParsing);
+};
 
 function parsedDates({ documents, events }) {
 	logger.logTitle('Parsing dates in data');
@@ -15,10 +20,10 @@ function parsedDates({ documents, events }) {
 	const documentsWithParsedDates = documents.map((document) => {
 		const { date, publicationDate } = document;
 
-		const parsedDate = isDateFormat(date) ? date : chrono.parseDate(date);
+		const parsedDate = isDateFormat(date) ? date : parseDate(date);
 		const parsedPublicationDate = isDateFormat(publicationDate)
 			? publicationDate
-			: chrono.parseDate(publicationDate);
+			: parseDate(publicationDate);
 
 		progressBar.update(currentlyProcessed += 1, {
 			id: document.fileName,
@@ -35,10 +40,10 @@ function parsedDates({ documents, events }) {
 
 		const parsedStartDate = isDateFormat(startDate)
 			? startDate
-			: chrono.parseDate(startDate);
+			: parseDate(startDate);
 		const parsedEndDate = isDateFormat(endDate)
 			? endDate
-			: chrono.parseDate(endDate);
+			: parseDate(endDate);
 
 		progressBar.update(currentlyProcessed += 1, {
 			id: event.fileName,
