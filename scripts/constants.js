@@ -12,6 +12,7 @@ const FILE_PATHS = {
 	LOCATIONS_DATA_PATH: './data/json/locations/locations.json',
 	GRAPHCOOL_NODES_PATH: './graphcoolData/nodes/',
 	GRAPHCOOL_RELATIONS_PATH: './graphcoolData/relations/',
+	GRAPHCOOL_BRIEFINGBOOK_NODES: './graphcoolData/nodes/briefingBookNodes.json',
 };
 
 const ERROR_TYPES = {
