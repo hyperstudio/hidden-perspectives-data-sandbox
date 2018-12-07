@@ -24,6 +24,7 @@ const createGraphcoolLocationNode = ({
 	lat: locationLatitude,
 	lon: locationLongitude,
 	abstract: locationDescription,
+	title,
 }) => omitNullValues({
 	_typeName: 'Location',
 	id: getRandomID(),
@@ -32,7 +33,7 @@ const createGraphcoolLocationNode = ({
 	locationWikipediaUri,
 	locationLatitude,
 	locationLongitude,
-	locationName,
+	locationName: locationName || title,
 });
 
 const createGraphcoolLocations = (data) => {

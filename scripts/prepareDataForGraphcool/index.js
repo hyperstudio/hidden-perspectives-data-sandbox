@@ -139,7 +139,7 @@ getRelevantDataFromFiles(relevantDataPaths)
 	.then(createGraphcoolTags)
 	.then(createGraphcoolStakeholders)
 	// Import data into Graphcool
-	.then(graphcoolDataImport)
+	// .then(graphcoolDataImport)
 	// The End
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
