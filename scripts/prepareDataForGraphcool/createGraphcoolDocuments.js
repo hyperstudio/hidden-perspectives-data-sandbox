@@ -1,6 +1,9 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 const omitNullValues = require('../utils/omitNullValues');
 
+const createTitleFallback = (title, summary) => title
+	|| (summary ? `Untitled — ${summary.substring(0, 50)}…` : 'Untitled');
+
 const createDocumentNode = ({
 	fileName,
 	title,
@@ -17,7 +20,7 @@ const createDocumentNode = ({
 	documentMediaType: 'RawText',
 	documentOriginalID: fileName,
 	documentPublicationDate: publicationDate,
-	documentTitle: title,
+	documentTitle: createTitleFallback(title, summary),
 	documentTranscript: textFileContent,
 });
 
