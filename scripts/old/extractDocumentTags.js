@@ -29,8 +29,8 @@ function readSheet(sheetPath) {
 				// first row is the table header
 				if (
 					rowNumber > startRow + 1
-                    && rowNumber < endRow
-                    && row.getCell(1).value
+					&& rowNumber < endRow
+					&& row.getCell(1).value
 				) {
 					const filename = row.getCell(1).value;
 					const classification = row.getCell(11).value;

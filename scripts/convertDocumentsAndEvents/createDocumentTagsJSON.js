@@ -5,13 +5,14 @@ function createDocumentTagsJSON(tagType, { documents }) {
 		const { fileName, kind, classification } = document;
 
 		let tagName;
-		if (tagType === 'kind') {
-			tagName = kind;
-		} else if (tagType === 'classification') {
-			tagName = classification;
+		if (kind && tagType === 'kind') {
+			tagName = kind.trim();
+		} else if (classification && tagType === 'classification') {
+			tagName = classification.trim();
 		}
 
 		const hasTag = Object.prototype.hasOwnProperty.call(documentTags, tagName);
+
 		if (!hasTag) {
 			documentTags[tagName] = [fileName];
 		} else {
