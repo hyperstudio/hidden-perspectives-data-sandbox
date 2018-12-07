@@ -138,10 +138,13 @@ getRelevantDataFromFiles(relevantDataPaths)
 	.then(createGraphcoolLocations)
 	.then(createGraphcoolTags)
 	.then(createGraphcoolStakeholders)
-	// Create entity-related RELATIONS
-	// .then(createEntityRelatedRealtions)
 	// Import data into Graphcool
 	// .then(graphcoolDataImport)
 	// The End
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
+
+// Briefing Book Relations
+// Relation Document to File
+// (Optional) connect documents and events with related event entities
+// (Optional) connect briefing books to events and documents
