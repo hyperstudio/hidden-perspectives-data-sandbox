@@ -9,7 +9,7 @@ function importDataToGraphcool(graphcoolData) {
 		console.log(graphcoolData.valueType);
 		const headers = {
 			'Content-Type': 'application/json',
-			Authorization: process.env.GRAPHCOOL_AUTHORIZATION_TOKEN,
+			Authorization: `Bearer ${process.env.GRAPHCOOL_AUTHORIZATION_TOKEN}`,
 		};
 		const projectID = process.env.GRAPHCOOL_PROJECT_ID;
 		const url = `https://api.graph.cool/simple/v1/${projectID}/import`;
