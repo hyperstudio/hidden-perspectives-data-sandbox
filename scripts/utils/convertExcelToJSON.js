@@ -47,13 +47,13 @@ function EventData(data) {
 		id: data[1] || null,
 		originalDate: data[2] || null,
 		startDate: data[3] || null,
-		endDate: data[5] || null,
-		title: data[6] || null,
-		description: data[7] || null,
-		location: data[8] || null,
-		reference: data[9] || null,
-		flag: data[10] || null,
-		notes: data[11] || null,
+		endDate: data[4] || null,
+		title: data[5] || null,
+		description: data[6] || null,
+		location: data[7] || null,
+		reference: data[8] || null,
+		flag: data[9] || null,
+		notes: data[10] || null,
 	};
 }
 
