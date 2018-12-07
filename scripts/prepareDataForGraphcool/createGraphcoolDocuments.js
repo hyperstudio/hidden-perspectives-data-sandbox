@@ -1,18 +1,5 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 
-// const relationFields = {
-// 	briefingBooksMentionedIn: [],
-// 	documentAuthors: [],
-// 	documentClassification: [],
-// 	documentDuplicates: [],
-// 	documentFiles: [],
-// 	documentKind: [],
-// 	mentionedEvents: [],
-// 	mentionedLocations: [],
-// 	mentionedStakeholders: [],
-//	documentFiles: [documentOriginalFile],
-// };
-
 const createDocumentNode = ({
 	fileName,
 	sessionNumber,
@@ -55,11 +42,36 @@ const createDocumentNode = ({
 	sessionNumber,
 });
 
-const createGraphcoolDocuments = (data) => saveGraphcoolData({
-	data: data.documents.map(createDocumentNode),
-	type: 'nodes',
-	fileName: 'documentsNodes.json',
-})
+const createDocumentFileRelation = ({
+	documentOriginalFile,
+	fileName,
+}) => documentOriginalFile && [
+	{
+		_typeName: 'Document',
+		id: fileName,
+		fieldName: 'documentFiles',
+	},
+	{
+		_typeName: 'File',
+		id: documentOriginalFile,
+		fieldName: 'documentsIncludedIn',
+	},
+];
+
+const createGraphcoolDocuments = (data) => Promise.all([
+	saveGraphcoolData({
+		data: data.documents.map(createDocumentNode),
+		type: 'nodes',
+		fileName: 'documentsNodes.json',
+	}),
+	saveGraphcoolData({
+		data: data.documents
+			.map(createDocumentFileRelation)
+			.filter(Array.isArray),
+		type: 'relations',
+		fileName: 'documentsRelations.json',
+	}),
+])
 	.then(() => Promise.resolve(data))
 	.catch((err) => {
 		throw new Error(err);
