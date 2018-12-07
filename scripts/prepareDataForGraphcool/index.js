@@ -1,12 +1,11 @@
 require('dotenv').config();
 const fs = require('fs');
-const cliProgress = require('cli-progress');
 
 // Util scripts
 const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
-const graphcoolDataImport = require('../utils/graphcoolDataImport');
+// const graphcoolDataImport = require('../utils/graphcoolDataImport');
 
 // Scripts
 const createGraphcoolClassifications = require('./createGraphcoolClassifications');
@@ -19,14 +18,6 @@ const createGraphcoolLocations = require('./createGraphcoolLocations');
 const createGraphcoolTags = require('./createGraphcoolTags');
 
 
-function getNumberOfDataItems(data) {
-	const isArray = Array.isArray(data);
-	const dataLength = isArray ? data.length : Object.keys(data).length;
-
-	return dataLength;
-}
-
-// TODO: Which entities are relevant?
 function getRelevantEntityType(entityTypes) {
 	let entityType;
 	const relevantEntityTypes = ['person', 'location', 'organisation', 'event'];
