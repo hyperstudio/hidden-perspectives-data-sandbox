@@ -28,18 +28,13 @@ const inRange = (val, min, max) => val >= min && val <= max;
 
 const getRelationFieldName = (fileName, entity, data) => {
 	const { start } = entity;
-	if (isDocument(fileName)) {
-		const document = data.documents.find((doc) => doc.fileName === fileName);
+	const document = data.documents.find((doc) => doc.fileName === fileName);
 
-		if (document && document.author) {
-			const { author } = document;
+	if (document) {
+		const isAuthor = document.author && inRange(start, 0, document.author.length);
 
-			const isAuthor = inRange(start, 0, author.length);
-			const isMentionedIn = inRange(start, author.length, entity.orinalString);
-
-			if (isAuthor) return { stakeholder: 'documents', node: 'documentAuthors' };
-			if (isMentionedIn) return { stakeholder: 'documentsMentionedIn', node: 'mentionedStakholders' };
-		}
+		if (isAuthor) return { stakeholder: 'documents', node: 'documentAuthors' };
+		return { stakeholder: 'documentsMentionedIn', node: 'mentionedStakholders' };
 	}
 	return { stakeholder: 'eventsInvolvedIn', node: 'eventStakeholders' };
 };
@@ -76,12 +71,12 @@ const createGraphcoolStakeholders = (data) => {
 		saveGraphcoolData({
 			data: nodes,
 			type: 'nodes',
-			fileName: 'tagNodes.json',
+			fileName: 'stakeholderNodes.json',
 		}),
 		saveGraphcoolData({
 			data: relations,
 			type: 'relations',
-			fileName: 'tagRelations.json',
+			fileName: 'stakeholderRelations.json',
 		}),
 	])
 		.then(() => data)

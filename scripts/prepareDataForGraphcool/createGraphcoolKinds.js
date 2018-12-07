@@ -24,7 +24,7 @@ function saveKindRelations(relations) {
 
 function createKindNode(name) {
 	const kindsFields = {
-		_typeName: 'Kinds',
+		_typeName: 'Kind',
 		id: getRandomID(),
 		name,
 	};
@@ -34,7 +34,7 @@ function createKindNode(name) {
 
 function createKindRelation({ id }, documentID) {
 	const relationKinds = {
-		_typeName: 'Kinds',
+		_typeName: 'Kind',
 		id,
 		fieldName: 'documentsWithKinds',
 	};
