@@ -18,6 +18,7 @@ const uniqueArrayOfBriefingBookIDs = (documents) => [
 ];
 
 const createGraphcoolBriefingBookNode = (briefingBookNumber) => ({
+	_typeName: 'BriefingBook',
 	id: getRandomID(),
 	createdAt: new Date(),
 	briefingBookTitle: `Briefing Book ${briefingBookNumber}`,
@@ -75,14 +76,14 @@ const createGraphcoolBriefingBooks = (data) => {
 	const { nodes, relations } = uniqueArrayOfBriefingBookIDs(data.documents)
 		.reduce((acc, briefingBookNumber) => {
 			const node = createGraphcoolBriefingBookNode(briefingBookNumber);
-			const relation = createGraphcoolBriefingBookRelation(
+			const nodeRelations = createGraphcoolBriefingBookRelation(
 				data,
 				briefingBookNumber,
 				node.id,
 			);
 			return {
 				nodes: [...acc.nodes, node],
-				relations: [...acc.relations, relation],
+				relations: [...acc.relations, ...nodeRelations],
 			};
 		}, { nodes: [], relations: [] });
 

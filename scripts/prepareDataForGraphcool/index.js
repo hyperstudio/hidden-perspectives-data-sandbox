@@ -5,7 +5,7 @@ const fs = require('fs');
 const logger = require('../utils/logger');
 const abortWithError = require('../utils/abortWithError');
 const { getPathByConstantName } = require('../utils/pathUtil');
-// const graphcoolDataImport = require('../utils/graphcoolDataImport');
+const graphcoolDataImport = require('../utils/graphcoolDataImport');
 
 // Scripts
 const createGraphcoolClassifications = require('./createGraphcoolClassifications');
@@ -125,21 +125,21 @@ const relevantDataPaths = {
 };
 
 getRelevantDataFromFiles(relevantDataPaths)
-	.then(clusterEntities)
-	.then(splitEntityTypes)
-	// Create Graphcool NODES
-	.then(createGraphcoolClassifications)
-	.then(createGraphcoolKinds)
-	// Create main NODES
-	.then(createGraphcoolEvents)
-	.then(createGraphcoolDocuments)
-	// Create entity-related NODES
-	.then(createGraphcoolBriefingBooks)
-	.then(createGraphcoolLocations)
-	.then(createGraphcoolTags)
-	.then(createGraphcoolStakeholders)
+	// .then(clusterEntities)
+	// .then(splitEntityTypes)
+	// // Create Graphcool NODES
+	// .then(createGraphcoolClassifications)
+	// .then(createGraphcoolKinds)
+	// // Create main NODES
+	// .then(createGraphcoolEvents)
+	// .then(createGraphcoolDocuments)
+	// // Create entity-related NODES
+	// .then(createGraphcoolBriefingBooks)
+	// .then(createGraphcoolLocations)
+	// .then(createGraphcoolTags)
+	// .then(createGraphcoolStakeholders)
 	// Import data into Graphcool
-	// .then(graphcoolDataImport)
+	.then(graphcoolDataImport)
 	// The End
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
