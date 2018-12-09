@@ -1,5 +1,6 @@
 const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
+const filterArrayForObjectsWithUniqueKey = require('../utils/filterArrayForObjectsWithUniqueKey');
 
 function saveKindNode(nodes) {
 	const dataOptions = {
@@ -20,7 +21,6 @@ function saveKindRelations(relations) {
 
 	return saveGraphcoolData(dataOptions);
 }
-
 
 function createKindNode(name) {
 	const kindsFields = {

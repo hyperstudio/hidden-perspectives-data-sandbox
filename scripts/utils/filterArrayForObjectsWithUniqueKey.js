@@ -1,7 +1,7 @@
 const filterArrayForObjectsWithUniqueKey = (arrayToBeFiltered, uniqueObjectKey) => Object.values(
 	arrayToBeFiltered.reduce((acc, currentObject) => ({
 		...acc,
-		[currentObject[uniqueObjectKey]]: currentObject,
+		[(currentObject[uniqueObjectKey] || '').trim().toLowerCase()]: currentObject,
 	}), {}),
 );
 

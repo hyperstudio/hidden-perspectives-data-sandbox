@@ -96,7 +96,12 @@ function parseEntityDandelionResponse(response) {
 	};
 }
 
-const saveEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolve, reject) => {
+const saveEntity = ({
+	entities,
+	dataItem,
+	allDataItems,
+	originalString,
+}) => new Promise((resolve, reject) => {
 	const rawEntitiesPath = getPathByConstantName('RAW_ENTITIES');
 	readFile(rawEntitiesPath)
 		.then((fileData) => {
@@ -110,6 +115,7 @@ const saveEntity = ({ entities, dataItem, allDataItems }) => new Promise((resolv
 			allEntities.push({
 				entities,
 				fileName: dataItem.fileName,
+				originalString,
 			});
 
 			return allEntities;
@@ -146,6 +152,7 @@ function collectEntitiesFromDataItem(dataItem, allDataItems) {
 						entities: requestedEntities,
 						dataItem,
 						allDataItems,
+						originalString: stringToBeAnalyzed,
 					}))
 					.catch(onEntitiesSaveError)
 					.then((resolvedEntities) => resolve({

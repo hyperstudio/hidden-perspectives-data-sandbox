@@ -143,22 +143,3 @@ getRelevantDataFromFiles(relevantDataPaths)
 	// The End
 	.then(logger.logSuccessMessage)
 	.catch(abortWithError);
-
-// WE HAVE THE FOLLOWING NODES:
-// - Documents
-// - Classifications
-// - Kinds
-// - BriefingBooks
-// - Events
-// - Stakeholders
-// - Tags
-// - Locations
-
-// MISSING RELATIONS:
-// - Documents
-
-// RELATION ERRORs:
-// - Documents
-// - Events
-// - Kind
-// - BB

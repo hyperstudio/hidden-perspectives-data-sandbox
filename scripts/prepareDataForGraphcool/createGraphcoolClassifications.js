@@ -1,5 +1,6 @@
 const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
+const filterArrayForObjectsWithUniqueKey = require('../utils/filterArrayForObjectsWithUniqueKey');
 
 function saveClassificationNode(nodes) {
 	const dataOptions = {

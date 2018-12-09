@@ -1,6 +1,7 @@
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
 const getRandomID = require('../utils/getRandomID');
 const omitNullValues = require('../utils/omitNullValues');
+const filterArrayForObjectsWithUniqueKey = require('../utils/filterArrayForObjectsWithUniqueKey');
 
 const entityIsLocation = ({ types }) => Boolean(
 	types && types.length
@@ -50,8 +51,9 @@ const createGraphcoolTagRelations = ({ fileNames }, { id }) => fileNames.map(({ 
 });
 
 const createGraphcoolTags = (data) => {
-	const { nodes, relations } = data.entities
-		.filter(entityIsTag)
+	const tagEntities = data.entities.filter(entityIsTag);
+	const tags = filterArrayForObjectsWithUniqueKey(tagEntities, 'title');
+	const { nodes, relations } = tags
 		.reduce((acc, entity) => {
 			const node = createGraphcoolTagNode(entity);
 			const fileNameRelations = createGraphcoolTagRelations(entity, node);

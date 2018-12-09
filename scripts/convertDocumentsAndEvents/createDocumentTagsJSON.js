@@ -6,9 +6,9 @@ function createDocumentTagsJSON(tagType, { documents }) {
 
 		let tagName;
 		if (kind && tagType === 'kind') {
-			tagName = kind.trim();
+			tagName = kind.trim().toLowerCase();
 		} else if (classification && tagType === 'classification') {
-			tagName = classification.trim();
+			tagName = classification.trim().toLowerCase();
 		}
 
 		const hasTag = Object.prototype.hasOwnProperty.call(documentTags, tagName);
