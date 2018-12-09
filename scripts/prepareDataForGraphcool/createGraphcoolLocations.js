@@ -38,7 +38,7 @@ const createGraphcoolLocationNode = ({
 });
 
 const createGraphcoolLocations = (data) => {
-	const { nodes, relations } = filterArrayForObjectsWithUniqueKey(data.locations, 'locationName')
+	const { nodes, relations } = filterArrayForObjectsWithUniqueKey(data.locations, 'display_name')
 		.reduce((acc, location) => {
 			const node = createGraphcoolLocationNode(location);
 			const relation = createGraphcoolLocationRelation(location, node.id);

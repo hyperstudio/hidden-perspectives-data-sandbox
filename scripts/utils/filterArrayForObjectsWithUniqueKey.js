@@ -1,6 +1,8 @@
-const filterArrayForObjectsWithUniqueKey = (arrayToBeFiltered, uniqueObjectKey) => arrayToBeFiltered
-	.filter((array, index, self) => index === self.findIndex((arr) => (
-		arr.label === array[uniqueObjectKey]
-	)));
+const filterArrayForObjectsWithUniqueKey = (arrayToBeFiltered, uniqueObjectKey) => Object.values(
+	arrayToBeFiltered.reduce((acc, currentObject) => ({
+		...acc,
+		[currentObject[uniqueObjectKey]]: currentObject,
+	}), {}),
+);
 
 module.exports = filterArrayForObjectsWithUniqueKey;
