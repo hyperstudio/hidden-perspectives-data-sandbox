@@ -46,13 +46,13 @@ const createGraphcoolDocuments = (data) => Promise.all([
 		type: 'nodes',
 		fileName: 'documentsNodes.json',
 	}),
-	// saveGraphcoolData({
-	// 	data: data.documents
-	// 		.map(createDocumentFileRelation)
-	// 		.filter(Array.isArray),
-	// 	type: 'relations',
-	// 	fileName: 'documentsRelations.json',
-	// }),
+	saveGraphcoolData({
+		data: data.documents
+			.map(createDocumentFileRelation)
+			.filter(Array.isArray),
+		type: 'relations',
+		fileName: 'documentsRelations.json',
+	}),
 ])
 	.then(() => Promise.resolve(data))
 	.catch((err) => {
