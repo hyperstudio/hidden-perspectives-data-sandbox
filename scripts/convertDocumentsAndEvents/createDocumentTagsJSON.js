@@ -1,26 +1,23 @@
-function createDocumentTagsJSON(tagType, { documents }) {
-	const documentTags = {};
+const getRandomId = require('../utils/getRandomID');
 
-	documents.forEach((document) => {
-		const { fileName, kind, classification } = document;
+const hasTag = (key, val) => (obj) => (obj[key] || '').trim().toLowerCase() === val.trim().toLowerCase();
+const prop = (key) => (obj) => obj[key];
+const existsAndIsUnique = (val, idx, arr) => val && arr.indexOf(val) === idx;
 
-		let tagName;
-		if (kind && tagType === 'kind') {
-			tagName = kind.trim().toLowerCase();
-		} else if (classification && tagType === 'classification') {
-			tagName = classification.trim().toLowerCase();
-		}
+const createTagByName = (name, tagType, documents) => ({
+	id: getRandomId(),
+	documentsWithTag: documents
+		.filter(hasTag(tagType, name))
+		.map(prop('fileName')),
+	name: name.trim(),
+});
 
-		const hasTag = Object.prototype.hasOwnProperty.call(documentTags, tagName);
+const createTagForProp = (key, documents) => (name) => createTagByName(name, key, documents);
 
-		if (!hasTag) {
-			documentTags[tagName] = [fileName];
-		} else {
-			documentTags[tagName].push(fileName);
-		}
-	});
+const createJSONFromKey = (tagType, { documents }) => documents
+	.map(prop(tagType))
+	.filter(existsAndIsUnique)
+	.map(createTagForProp(tagType, documents));
 
-	return documentTags;
-}
+module.exports = createJSONFromKey;
 
-module.exports = createDocumentTagsJSON;

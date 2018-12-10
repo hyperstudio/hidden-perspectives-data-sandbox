@@ -1,6 +1,4 @@
-const getRandomID = require('../utils/getRandomID');
 const saveGraphcoolData = require('../utils/saveGraphcoolData');
-const filterArrayForObjectsWithUniqueKey = require('../utils/filterArrayForObjectsWithUniqueKey');
 
 function saveKindNode(nodes) {
 	const dataOptions = {
@@ -22,53 +20,38 @@ function saveKindRelations(relations) {
 	return saveGraphcoolData(dataOptions);
 }
 
-function createKindNode(name) {
-	const kindsFields = {
-		_typeName: 'Kind',
-		id: getRandomID(),
-		name,
-	};
+const createKindNode = ({ id, name }) => ({
+	_typeName: 'Kind',
+	id,
+	name,
+});
 
-	return kindsFields;
-}
-
-function createKindRelation({ id }, documentID) {
-	const relationKinds = {
+const createKindRelation = (kind) => (documentId) => [
+	{
 		_typeName: 'Kind',
-		id,
+		id: kind.id,
 		fieldName: 'documentsWithKind',
-	};
-	const relationDocument = {
+	},
+	{
 		_typeName: 'Document',
-		id: documentID,
+		id: documentId,
 		fieldName: 'documentKinds',
-	};
-
-	return [relationKinds, relationDocument];
-}
+	},
+];
 
 function createGraphcoolKinds(data) {
 	const { kinds } = data;
 
-	const kindNames = Object.keys(kinds);
-	const kindNodes = kindNames
-		.filter((name) => name)
-		.map((name) => createKindNode(name));
+	const kindNodes = kinds.map(createKindNode);
 
-	const kindRelations = kindNodes.map((kindNode) => {
-		const { name } = kindNode;
-		const documentsWithKind = kinds[name];
-
-		return documentsWithKind
-			.filter((docId) => docId)
-			.map((docId) => createKindRelation(kindNode, docId));
-	});
-
-	const flattenedKindRelations = [].concat(...kindRelations);
+	const kindRelations = kinds.reduce((acc, kind) => [
+		...acc,
+		...kind.documentsWithTag.map(createKindRelation(kind)),
+	], []);
 
 	return Promise.all([
 		saveKindNode(kindNodes),
-		saveKindRelations(flattenedKindRelations),
+		saveKindRelations(kindRelations),
 	])
 		.then(() => Promise.resolve(data))
 		.catch((err) => {
