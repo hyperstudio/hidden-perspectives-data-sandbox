@@ -1,8 +1,9 @@
 .env
 node_modules/
-data/
+data/*
 json/
 
 *.todo
-
 .DS_Store
+
+!/**/.gitkeep
