@@ -2,16 +2,17 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 
 const uploadFile = (filename, file) => new Promise((resolve, reject) => {
-	const form = new FormData();
-	form.append('data', file, { filename });
+	const data = new FormData();
+	data.append('data', file, { filename });
 
 	const url = `https://api.graph.cool/file/v1/${process.env.GRAPHCOOL_PROJECT_ID}`;
 	fetch(url, {
 		method: 'POST',
-		body: form,
+		body: data,
 		headers: {
-			...form.getHeaders(),
+			...data.getHeaders(),
 			Authorization: `Bearer ${process.env.GRAPHCOOL_AUTHORIZATION_TOKEN}`,
+			'Access-Control-Allow-Origin': '*',
 		},
 	})
 		.then((response) => response.json())

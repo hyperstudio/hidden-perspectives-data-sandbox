@@ -4,7 +4,7 @@ const FILE_PATHS = {
 	RAW_CLUSTERED_STAKEHOLDERS: './data/json/stakeholder/clusteredDocumentStakeholders.json',
 	RAW_ENTITIES: './data/json/entities/extractedEntities.json',
 	RAW_WORKBOOKS_DIRECTORY_PATH: './data/sheets/',
-	ORIGINAL_DOCUMENT_DIRECTORY_PATH: './data/original_documents/',
+	ORIGINAL_DOCUMENT_DIRECTORY_PATH: './data/optimized_documents/',
 	RAW_TEXT_FILES_DIRECTORY_PATH: './data/text_files/',
 	DOCUMENTS_DATA_PATH: './data/json/documents/documentsWithEntitiesAndTextFiles.json',
 	EVENTS_DATA_PATH: './data/json/events/eventsWithEntitiesAndTextFiles.json',

@@ -48,11 +48,11 @@ const importGraphcoolData = () => {
 	const nodesPath = getPathByConstantName('GRAPHCOOL_NODES_PATH');
 
 	return getPathsInDir(nodesPath)
-		.then((nodesPaths) => Promise.all(
-			nodesPaths
-				.map((path) => `${nodesPath}/${path}`)
-				.map(readFileAndImportToGraphcool('nodes')),
-		))
+		// .then((nodesPaths) => Promise.all(
+		// 	nodesPaths
+		// 		.map((path) => `${nodesPath}/${path}`)
+		// 		.map(readFileAndImportToGraphcool('nodes')),
+		// ))
 		.then(() => getPathsInDir(relationsPath))
 		.then((relationPaths) => Promise.all(
 			relationPaths

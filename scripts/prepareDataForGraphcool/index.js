@@ -125,19 +125,19 @@ const relevantDataPaths = {
 };
 
 getRelevantDataFromFiles(relevantDataPaths)
-	.then(clusterEntities)
-	.then(splitEntityTypes)
-	// Create Graphcool NODES
-	.then(createGraphcoolClassifications)
-	.then(createGraphcoolKinds)
-	// Create main NODES
-	.then(createGraphcoolEvents)
-	.then(createGraphcoolDocuments)
-	// Create entity-related NODES
-	.then(createGraphcoolBriefingBooks)
-	.then(createGraphcoolLocations)
-	.then(createGraphcoolTags)
-	.then(createGraphcoolStakeholders)
+	// .then(clusterEntities)
+	// .then(splitEntityTypes)
+	// // Create Graphcool NODES
+	// .then(createGraphcoolClassifications)
+	// .then(createGraphcoolKinds)
+	// // Create main NODES
+	// .then(createGraphcoolEvents)
+	// .then(createGraphcoolDocuments)
+	// // Create entity-related NODES
+	// .then(createGraphcoolBriefingBooks)
+	// .then(createGraphcoolLocations)
+	// .then(createGraphcoolTags)
+	// .then(createGraphcoolStakeholders)
 	// Import data into Graphcool
 	.then(graphcoolDataImport)
 	// The End

@@ -55,7 +55,7 @@ const getUploadSequenceReducer = (originalsParentPath, files) => (
 	() => getFileObjectFromFile(fullFileName)
 		.then((fileObject) => {
 			if (fileObject) return fileObject;
-			return readFile(`${originalsParentPath}/${fullFileName}`)
+			return readFile(`${originalsParentPath}/${fullFileName}`, null)
 				.then((file) => uploadFile(fullFileName, file))
 				.then(saveFile);
 		})
