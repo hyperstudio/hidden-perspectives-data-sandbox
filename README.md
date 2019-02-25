@@ -1,4 +1,6 @@
 # Hidden Perspectives – Data Sandbox
+This repository includes scripts that help with the data preparations and deployment for [Hidden Perspectives App](https://github.com/vogelino/hidden-perspectives-app).
+
 ## Clone the project
 First, clone the project locally and move into the folder. Open your terminal and run:
 ```sh
@@ -89,7 +91,7 @@ The `prepareDataForGraphcool` scripts read the data from `./data`. Then parses a
 - `nodes` – Nodes that are imported to Graphcool
 - `relations` – Relations that are imported to Graphcool
 
-### Document and event files
+### Originnal document and event files
 
 Documents and events were provided as excel sheets. With the following structures:
 
