@@ -89,3 +89,45 @@ The `prepareDataForGraphcool` scripts read the data from `./data`. Then parses a
 - `nodes` – Nodes that are imported to Graphcool
 - `relations` – Relations that are imported to Graphcool
 
+### Document and event files
+
+Documents and events were provided as excel sheets. With the following structures:
+
+#### Documents
+
+Document excel sheet are placed in `./data/sheets/documents/`. Their file names have to be `briefing-book-documents--{briefingBookNumber}`. For example:
+
+```sh
+.
+├── briefing-book-documents--01
+├── briefing-book-documents--02
+├── briefing-book-documents--03
+└── ...
+```
+
+Fields with the title `file name` should match the file names in the `./data/original_documents/` directory.
+
+| file name | BB Page | Session Number | Duplicate of | Author | Contributor | Subject | Kind ID | Kind | Classification ID | Classification | Title | Date | Summary | Source/From | To/For | Publisher | Publication Date | Bibliographic Info | ... |
+|-----------|---------|----------------|--------------|--------|-------------|---------|---------|------|-------------------|----------------|-------|------|---------|-------------|--------|-----------|------------------|--------------------|-----|
+| uir001001 |         |                |              |        |             |         |         |      |                   |                |       |      |         |             |        |           |                  |                    |     |
+| uir001002 |         |                |              |        |             |         |         |      |                   |                |       |      |         |             |        |           |                  |                    |     |
+| uir001003 |         |                |              |        |             |         |         |      |                   |                |       |      |         |             |        |           |                  |                    |     |
+
+
+#### Events
+
+Event excel sheet are placed in `./data/sheets/events/`. Their file names have to be `briefing-book-events--{briefingBookNumber}`. For example:
+
+```sh
+.
+├── briefing-book-events--01
+├── briefing-book-events--02
+├── briefing-book-events--03
+└── ...
+```
+
+| BB | ID | Original Date | Start Date | End Date | Title | Description | Location | Reference | Flag | Notes |
+|----|----|---------------|------------|----------|-------|-------------|----------|-----------|------|-------|
+| 1  | 1  |               |            |          |       |             |          |           |      |       |
+| 1  | 2  |               |            |          |       |             |          |           |      |       |
+| 1  | 3  |               |            |          |       |             |          |           |      |       |
