@@ -17,14 +17,10 @@ $ yarn install
 For data preparation we're using the [Entity Extraction API](https://dandelion.eu/docs/api/datatxt/nex/getting-started/) from [Dandelion API](https://dandelion.eu/). Follow their instructions and get a free API Key.
 
 ### Graphcool
-[Graphcool](https://www.graph.cool/) is an open-source and self-hosted backend-as-a-service to develop serverless GraphQL backends.
-
-Create a Graphcool project. You'll need the `project id` and `authorization token` for deploying the data.
+[Graphcool](https://www.graph.cool/) is an open-source and self-hosted backend-as-a-service to develop serverless GraphQL backends. Create a Graphcool project. You'll need the `project id` and `authorization token` for deploying the data.
 
 ### LocationIQ
-[Sign up](https://locationiq.com/) and get a developer token.
-
-Copy `.env.sample`, rename the filt to `.env`. and edit so it matches your credentials.
+[Sign up](https://locationiq.com/) and get a developer token. Copy `.env.sample`, rename the file to `.env`. and edit so it matches your credentials.
 
 
 ## Available scripts
@@ -43,6 +39,7 @@ Creates nodes and relations and finally imports them to Graphcool.
 
 Create a `data` and `graphcoolData` directories and subdirectories so your folder structure matches the following directory tree:
 
+```sh
 .
 ├── README.md
 ├── package-lock.json
@@ -73,9 +70,10 @@ Create a `data` and `graphcoolData` directories and subdirectories so your folde
 │       └── stakeholder
 │
 └── graphcoolData
+```
 
 
-- `sheets`: Contains the excel sheets that were provided as dataset
-- `original_documents`: The original document PDF's
-- `text_files`: Document transcripts
-- `json`: The `convertDocumentsAndEvents` scripts save data to this folder
+- `sheets` – Contains the excel sheets that were provided as dataset
+- `original_documents` – The original document PDF's
+- `text_files` – Document transcripts
+- `json` – The `convertDocumentsAndEvents` scripts save data to this folder
